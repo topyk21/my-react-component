@@ -1,14 +1,15 @@
 import * as React from 'react'
+import { Switch, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'connected-react-router'
 import { PersistGate } from 'redux-persist/integration/react'
 import { hot } from 'react-hot-loader'
-import { Switch, Route } from 'react-router-dom'
-import { ConnectedRouter } from 'connected-react-router'
+
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import blue from '@material-ui/core/colors/blue'
 // Custom library
-import setStoreConfig from 'lib/redux/redux-store'
+import getStoreConfig from 'lib/redux/redux-store'
 import RouteHistory from 'lib/react-router/route-history'
 // Page components
 import Page from 'pages/Page'
@@ -20,7 +21,7 @@ const theme = createMuiTheme({
   },
 })
 /** Get Redux Store */
-const mainStore = setStoreConfig()
+const mainStore = getStoreConfig()
 /** App의 기본 설정들을 위한 Wrapper들을 적용시키는 Functional Component */
 const AppWrapper: React.SFC<{}> = props => (
   <Provider store={mainStore.store}>
