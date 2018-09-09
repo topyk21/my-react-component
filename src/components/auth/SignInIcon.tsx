@@ -3,6 +3,9 @@ import styled from 'styled-components'
 
 import AccountCircle from '@material-ui/icons/AccountCircle'
 
+interface ISignInIconProps {
+  pending: boolean
+}
 const Wrapper = styled.div`
   height: 200px;
   padding: 10%;
@@ -20,9 +23,6 @@ const Wrapper = styled.div`
     }
   }
 `
-export interface ISignInIconProps {
-  pending: boolean
-}
 
 const SignInIcon: React.SFC<ISignInIconProps> = props => (
   <Wrapper>

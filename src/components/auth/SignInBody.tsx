@@ -1,17 +1,30 @@
 import * as React from 'react'
+import styled from 'styled-components'
 
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
-export interface ISignInBodyProps {
+interface ISignInBodyProps {
   onSignIn: (e: React.MouseEvent<HTMLElement>) => void
   onChangeId: (e: React.ChangeEvent<HTMLInputElement>) => void
   onChangePassword: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
+const InputsWrapper = styled.div`
+  padding: 8px 20px 20px;
+`
+const ButtonsWrapper = styled.div`
+  padding: 8px 20px 20px;
+  margin-top: 10px;
+  & > button {
+    margin-top: 10px;
+    width: 100%;
+    border-radius: 20px;
+  }
+`
 
 const SignInBody: React.SFC<ISignInBodyProps> = props => (
   <React.Fragment>
-    <div className="sign-form-input">
+    <InputsWrapper>
       <TextField
         autoComplete="off"
         fullWidth={true}
@@ -27,15 +40,15 @@ const SignInBody: React.SFC<ISignInBodyProps> = props => (
         label="Password"
         onChange={props.onChangePassword}
       />
-    </div>
-    <div className="sign-form-button">
+    </InputsWrapper>
+    <ButtonsWrapper>
       <Button variant="raised" color="primary" onClick={props.onSignIn}>
         SIGN IN
       </Button>
       <Button variant="raised" color="secondary">
         SIGN UP
       </Button>
-    </div>
+    </ButtonsWrapper>
   </React.Fragment>
 )
 

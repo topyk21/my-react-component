@@ -1,6 +1,8 @@
-import storage from 'redux-persist/lib/storage'
 import { persistReducer } from 'redux-persist'
 import { combineReducers } from 'redux'
+
+import storage from 'redux-persist/lib/storage'
+import auth, { IReduxState as IAuthReduxState } from 'components/auth/Widgets'
 
 /**
  * [Intellisense의 Auto complete 지원을 위한 interface]
@@ -10,12 +12,16 @@ import { combineReducers } from 'redux'
  * Redux에 존재하는 모든 state들의 자동완성을 지원 받을 수 있게 됩니다.
  */
 // tslint:disable-next-line
-export interface IReduxState {}
+export interface IReduxState {
+  auth: IAuthReduxState
+}
 /**
  * 모든 Reducer가 개발 완료된 뒤에는, 아래 Root reducer에 reducer의 레퍼런스를 넣어주게 됩니다.
  * 해당 작업을 통해 Reducer는 Redux의 관리하에 들어갑니다.
  */
-const rootReducer = combineReducers({})
+const rootReducer = combineReducers({
+  auth,
+})
 /**
  * SPA 아키텍처는 새로고침에 대한 Redux state들의 상태 보존을 지원해 주지 않습니다.
  * react-persist를 통해 새로고침을 하더라도, 현재 존재하는 redux 상태들을

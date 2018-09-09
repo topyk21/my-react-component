@@ -1,11 +1,8 @@
 import * as React from 'react'
-import SignForm from 'components/auth/SignForm';
+import SignForm from 'components/auth/Container'
 
-// tslint:disable-next-line
-interface IPageProps {}
-
-const Page: React.SFC<IPageProps> = props => {
-  return <div><SignForm /></div>
+const Page: React.SFC<{}> = props => {
+  return  <SignForm />
 }
 
 export default Page

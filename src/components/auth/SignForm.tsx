@@ -1,11 +1,15 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-import SignInIcon, { ISignInIconProps } from 'components/auth/SignInIcon'
-import SignInBody, { ISignInBodyProps } from 'components/auth/SignInBody'
+import SignInIcon from 'components/auth/SignInIcon'
+import SignInBody from 'components/auth/SignInBody'
 
-export interface ISignForm extends ISignInBodyProps, ISignInIconProps {}
-
+interface ISignForm {
+  pending: boolean
+  onSignIn: (e: React.MouseEvent<HTMLElement>) => void
+  onChangeId: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChangePassword: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 const Wrapper = styled.div`
   max-width: 280px;
   min-height: 200px;
@@ -15,18 +19,6 @@ const Wrapper = styled.div`
   background-color: rgba(170, 170, 170, 0.68);
   color: #274c5e;
   transform: translate(-50%, -50%);
-  & > .sign-form-input {
-    padding: 8px 20px 20px;
-  }
-  & > .sign-form-button {
-    padding: 8px 20px 20px;
-    margin-top: 10px;
-    & > button {
-      margin-top: 10px;
-      width: 100%;
-      border-radius: 20px;
-    }
-  }
 `
 
 const SignForm: React.SFC<ISignForm> = props => (
