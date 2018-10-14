@@ -1,14 +1,17 @@
 // tslint:disable:no-any
 import * as React from 'react'
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 import Actions from 'components/flex-layout/model/Actions'
 import TabSetNode from 'components/flex-layout/model/TabSetNode'
 import TabNode from 'components/flex-layout/model/TabNode'
-
 import Layout from 'components/flex-layout/view/Layout'
 import TabButton from 'components/flex-layout/view/TabButton'
 import PopupMenu from 'components/flex-layout/view/PopupMenu'
+
+import OverflowImg = require('components/flex-layout/static/images/more.png')
+import MaximizeImg = require('components/flex-layout/static/images/maximize.png')
+import MinimizeImg = require('components/flex-layout/static/images/restore.png')
 
 /** @hidden @internal */
 export interface ITabSetProps {
@@ -25,14 +28,75 @@ interface IHiddenTab {
   node: TabNode
   index: number
 }
+const TabToolbar = styled.div`
+  top: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+`
+const TabMaximizeButton = styled<{ isMaximized: boolean }, 'div'>('div')`
+  width: 20px;
+  height: 20px;
+  border: none;
+  outline-width: 0;
+  background: transparent url(${props => (props.isMaximized ? MinimizeImg : MaximizeImg)}) no-repeat
+    center;
+`
+const TabOverflowButton = styled.div`
+  float: left;
+  width: 20px;
+  height: 15px;
+  margin-top: 2px;
+  padding-left: 12px;
+  border: none;
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  background: transparent url(${OverflowImg}) no-repeat left;
+`
+const TabSetWrapper = styled.div`
+  overflow: hidden;
+  background-color: white;
+  box-sizing: border-box;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px #aaa;
+`
+const TabSetHeaderWrapper = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 3px 3px 3px 5px;
+  box-shadow: inset 0 0 3px 0 rgba(136, 136, 136, 0.54);
+  box-sizing: border-box;
+`
+const TabSetHeaderOuter = styled<{ isActive: boolean; isMaximized: boolean }, 'div'>('div')`
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  background: ${props =>
+    props.isMaximized
+      ? 'linear-gradient(#aaa, #eee)'
+      : props.isActive
+        ? 'linear-gradient(#fff, #aaa)'
+        : '#e8e8e8'};
+`
+const TabSetHeaderInner = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 10000px;
+`
 
 /** @hidden @internal */
 class TabSet extends React.Component<ITabSetProps, ITabSetState> {
-  recalcVisibleTabs: boolean
-  showOverflow: boolean
-  showToolbar: boolean
+  private recalcVisibleTabs: boolean
+  private showOverflow: boolean
+  private showToolbar: boolean
 
-  private tabSetToolbarRef = React.createRef<any>()
   private overflowButtonRef = React.createRef<any>()
 
   constructor(props: ITabSetProps) {
@@ -62,17 +126,15 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
     const node = this.props.node
 
     if (node.isEnableTabStrip() && this.recalcVisibleTabs) {
-      const toolbarWidth = (this.tabSetToolbarRef.current as Element).getBoundingClientRect().width
       let hideTabsAfter = 999
       for (let i = 0; i < node.getChildren().length; i += 1) {
         const child = node.getChildren()[i] as TabNode
-        if (child.getTabRect()!.getRight() > node.getRect().getRight() - (20 + toolbarWidth)) {
+        if (child.getTabRect()!.getRight() > node.getRect().getRight() - 20) {
           hideTabsAfter = Math.max(0, i - 1)
-          // console.log("tabs truncated to:" + hideTabsAfter);
           this.showOverflow = node.getChildren().length > 1
 
           if (i === 0) {
-            this.showToolbar = false
+            this.showToolbar = true
             if (child.getTabRect()!.getRight() > node.getRect().getRight() - 20) {
               this.showOverflow = false
             }
@@ -89,7 +151,6 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
   }
 
   onOverflowClick = (hiddenTabs: IHiddenTab[], event: React.MouseEvent<HTMLDivElement>) => {
-    // console.log("hidden tabs: " + hiddenTabs);
     const element = this.overflowButtonRef.current as Element
     PopupMenu.show(element, hiddenTabs, this.onOverflowItemSelect)
   }
@@ -170,117 +231,85 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
         }
       }
     }
-    let buttons: any[] = []
-
-    // allow customization of header contents and buttons
-    const renderState = { buttons, headerContent: node.getName() }
-    this.props.layout.customizeTabSet(this.props.node, renderState)
-    const headerContent = renderState.headerContent
-    buttons = renderState.buttons
-
-    let toolbar
-    if (this.showToolbar) {
-      if (this.props.node.isEnableMaximize()) {
-        buttons.push(
-          <button
-            key="max"
-            className={'flexlayout__tab_toolbar_button-' + (node.isMaximized() ? 'max' : 'min')}
-            onClick={this.onMaximizeToggle}
-          />
-        )
-      }
-      toolbar = (
-        <div
-          key="toolbar"
-          ref={this.tabSetToolbarRef}
-          className="flexlayout__tab_toolbar"
-          onMouseDown={this.onInterceptMouseDown}
-        >
-          {buttons}
-        </div>
+    const buttons: any[] = []
+    const toolbar = this.showToolbar && (
+      <TabToolbar
+        key="toolbar"
+        // innerRef={this.tabSetToolbarRef}
+        onMouseDown={this.onInterceptMouseDown}
+      >
+        <TabMaximizeButton
+          key="max"
+          isMaximized={node.isMaximized()}
+          onClick={this.onMaximizeToggle}
+        />
+      </TabToolbar>
+    )
+    if (this.showToolbar && this.props.node.isEnableMaximize()) {
+      buttons.push(
+        <TabMaximizeButton
+          key="max"
+          isMaximized={node.isMaximized()}
+          onClick={this.onMaximizeToggle}
+        />
       )
     }
 
     if (this.showOverflow) {
       tabs.push(
-        <button
+        <TabOverflowButton
           key="overflowbutton"
-          ref={this.overflowButtonRef}
-          className="flexlayout__tab_button_overflow"
+          innerRef={this.overflowButtonRef}
           onClick={this.onOverflowClick.bind(this, hiddenTabs)}
           onMouseDown={this.onInterceptMouseDown}
         >
           {hiddenTabs.length}
-        </button>
+        </TabOverflowButton>
       )
     }
 
     const showHeader = node.getName() !== undefined
-    let header
-    let tabStrip
-
-    let tabStripClasses = 'flexlayout__tab_header_outer'
-    if (this.props.node.getClassNameTabStrip() !== undefined) {
-      tabStripClasses += ' ' + this.props.node.getClassNameTabStrip()
-    }
-    if (node.isActive() && !showHeader) {
-      tabStripClasses += ' flexlayout__tabset-selected'
-    }
-
-    if (node.isMaximized() && !showHeader) {
-      tabStripClasses += ' flexlayout__tabset-maximized'
-    }
-
-    if (showHeader) {
-      let tabHeaderClasses = 'flexlayout__tabset_header'
-      if (node.isActive()) {
-        tabHeaderClasses += ' flexlayout__tabset-selected'
-      }
-      if (node.isMaximized()) {
-        tabHeaderClasses += ' flexlayout__tabset-maximized'
-      }
-      if (this.props.node.getClassNameHeader() !== undefined) {
-        tabHeaderClasses += ' ' + this.props.node.getClassNameHeader()
-      }
-
-      header = (
-        <div
-          className={tabHeaderClasses}
-          style={{ height: node.getHeaderHeight() + 'px' }}
-          onMouseDown={this.onMouseDown}
-          onTouchStart={this.onMouseDown}
-        >
-          {headerContent}
-          {toolbar}
-        </div>
-      )
-      tabStrip = (
-        <div
-          className={tabStripClasses}
-          style={{ height: node.getTabStripHeight() + 'px', top: node.getHeaderHeight() + 'px' }}
-        >
-          <div className="flexlayout__tab_header_inner">{tabs}</div>
-        </div>
-      )
-    } else {
-      tabStrip = (
-        <div
-          className={tabStripClasses}
-          style={{ top: '0px', height: node.getTabStripHeight() + 'px' }}
-          onMouseDown={this.onMouseDown}
-          onTouchStart={this.onMouseDown}
-        >
-          <div className="flexlayout__tab_header_inner">{tabs}</div>
-          {toolbar}
-        </div>
-      )
-    }
+    const isActive = node.isActive()
+    const isMaximized = node.isMaximized()
+    const header = showHeader && (
+      <TabSetHeaderWrapper
+        style={{ height: node.getHeaderHeight() + 'px' }}
+        onMouseDown={this.onMouseDown}
+        onTouchStart={this.onMouseDown}
+      >
+        {node.getName()}
+        {toolbar}
+      </TabSetHeaderWrapper>
+    )
+    const tabStrip = showHeader ? (
+      <TabSetHeaderOuter
+        isActive={isActive}
+        isMaximized={isMaximized}
+        style={{
+          height: `${node.getTabStripHeight()}px`,
+          top: `${node.getHeaderHeight()}px`,
+        }}
+      >
+        <TabSetHeaderInner>{tabs}</TabSetHeaderInner>
+      </TabSetHeaderOuter>
+    ) : (
+      <TabSetHeaderOuter
+        isActive={isActive}
+        isMaximized={isMaximized}
+        style={{ top: '0px', height: `${node.getTabStripHeight()}px` }}
+        onMouseDown={this.onMouseDown}
+        onTouchStart={this.onMouseDown}
+      >
+        <TabSetHeaderInner>{tabs}</TabSetHeaderInner>
+        {toolbar}
+      </TabSetHeaderOuter>
+    )
 
     return (
-      <div style={style} className="flexlayout__tabset">
+      <TabSetWrapper style={style}>
         {header}
         {tabStrip}
-      </div>
+      </TabSetWrapper>
     )
   }
 }

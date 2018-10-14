@@ -8,6 +8,7 @@ import Layout from 'components/flex-layout/view/Layout'
 import Actions from 'components/flex-layout/model/Actions'
 import TabNode from 'components/flex-layout/model/TabNode'
 import TabSetNode from 'components/flex-layout/model/TabSetNode'
+import RowNode from 'components/flex-layout/model/RowNode'
 
 /** @hidden @internal */
 export interface ITabButtonProps {
@@ -37,8 +38,11 @@ const TabButtonWrapper = styled<{ isSelected: boolean; isVisible: boolean; heigh
   vertical-align: top;
   box-sizing: border-box;
   color: ${props => (props.isSelected ? 'black' : 'gray')};
-  font-weight: ${props => (props.isSelected ? 'bold' : '')}
+  font-weight: bold;
   background-color: ${props => (props.isSelected ? '#ddd' : '')};
+  &:hover {
+    color: black;
+  }
 `
 const TabButtonIcon = styled.img`
   display: inline-block;
@@ -59,6 +63,9 @@ const TabButtonEditableTitle = styled<{ width: number }, 'input'>('input')`
 const TabButtonExit = styled.div`
   display: inline-block;
   margin-left: 5px;
+  &:hover {
+    color: red;
+  }
 `
 /** @hidden @internal */
 class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
@@ -80,7 +87,7 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
   componentDidUpdate() {
     this.updateRect()
     if (this.state.editing) {
-      this.tabButtonTitleRef.current.select()
+      (this.tabButtonTitleRef.current as HTMLInputElement).select()
     }
   }
 
@@ -123,15 +130,18 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
     }
   }
 
-  onClose = (event: React.MouseEvent<HTMLDivElement>) => {
-    const node = this.props.node
-    this.props.layout.doAction(Actions.deleteTab(node.getId()))
-  }
-
-  onCloseMouseDown = (
-    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
-  ) => {
+  onCloseTab = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation()
+
+    const tab = this.props.node
+    const tabSet = tab.getParent() as TabSetNode
+    const rowNode = tabSet.getParent() as RowNode
+
+    this.props.layout.doAction(Actions.deleteTab(tab.getId()))
+    if (tabSet.getChildren().length === 0) {
+      const defaultTabSet = rowNode.getChildren()[0]
+      this.props.layout.doAction(Actions.setActiveTabset(defaultTabSet.getId()))
+    }
   }
 
   updateRect() {
@@ -142,13 +152,6 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
       new Rect(r.left - clientRect.left, r.top - clientRect.top, r.width, r.height)
     )
     this.contentWidth = (this.tabButtonTitleRef.current as Element).getBoundingClientRect().width
-  }
-
-  onTextBoxMouseDown = (
-    event: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>
-  ) => {
-    // console.log("onTextBoxMouseDown");
-    event.stopPropagation()
   }
 
   onTextBoxKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -172,10 +175,6 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
 
   render() {
     const node = this.props.node
-    // allow customization of leading contents (icon) and contents
-    const renderState = { leading: node.getIcon(), content: node.getName() }
-    this.props.layout.customizeTab(node, renderState)
-
     const icon = node.getIcon() && <TabButtonIcon src={node.getIcon()} />
     const content = this.state.editing ? (
       <TabButtonEditableTitle
@@ -185,20 +184,12 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
         autoFocus={true}
         defaultValue={node.getName()}
         onKeyDown={this.onTextBoxKeyPress}
-        onMouseDown={this.onTextBoxMouseDown}
-        onTouchStart={this.onTextBoxMouseDown}
       />
     ) : (
-      <TabButtonTitle innerRef={this.tabButtonTitleRef}>{renderState.content}</TabButtonTitle>
+      <TabButtonTitle innerRef={this.tabButtonTitleRef}>{node.getName()}</TabButtonTitle>
     )
     const closeButton = this.props.node.isEnableClose() && (
-      <TabButtonExit
-        onMouseDown={this.onCloseMouseDown}
-        onClick={this.onClose}
-        onTouchStart={this.onCloseMouseDown}
-      >
-        Χ
-      </TabButtonExit>
+      <TabButtonExit onMouseDown={this.onCloseTab}>Χ</TabButtonExit>
     )
 
     return (

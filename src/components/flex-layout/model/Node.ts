@@ -48,7 +48,7 @@ abstract class Node {
       return id as string
     }
 
-    id = this.model.nextUniqueId()
+    id = this.model.getUniqueId()
     this.setId(id)
 
     return id as string

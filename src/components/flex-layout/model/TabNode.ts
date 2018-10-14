@@ -7,7 +7,6 @@ import { JSMap } from 'components/flex-layout/Types'
 import Node from 'components/flex-layout/model/Node'
 import Model from 'components/flex-layout/model/Model'
 import TabSetNode from 'components/flex-layout/model/TabSetNode'
-import BorderNode from 'components/flex-layout/model/BorderNode'
 import IDraggable from 'components/flex-layout/model/IDraggable'
 
 class TabNode extends Node implements IDraggable {
@@ -118,7 +117,7 @@ class TabNode extends Node implements IDraggable {
 
   /** @hidden @internal */
   delete() {
-    (this.parent as TabSetNode | BorderNode).remove(this)
+    (this.parent as TabSetNode).remove(this)
     this.fireEvent('close', {})
   }
 

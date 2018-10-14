@@ -20,9 +20,11 @@ interface ITabState {
   isShouldRendering: boolean
 }
 /** @hidden @internal */
-const TabWrapper = styled.div`
-  overflow: hidden;
+const TabWrapper = styled<{ isSelected: boolean; isMaximized: boolean }, 'div'>('div')`
+  overflow: auto;
   box-sizing: border-box;
+  display: ${props => (props.isSelected ? 'display' : 'none')};
+  z-index: ${props => props.isMaximized && '100'};
 `
 /** @hidden @internal */
 class Tab extends React.Component<ITabProps, ITabState> {
@@ -42,7 +44,6 @@ class Tab extends React.Component<ITabProps, ITabState> {
   componentWillReceiveProps(newProps: ITabProps) {
     if (!this.state.isShouldRendering && newProps.selected) {
       // load on demand
-      // console.log("load on demand: " + this.props.node.getName());
       this.setState({ isShouldRendering: true })
     }
   }
@@ -59,17 +60,16 @@ class Tab extends React.Component<ITabProps, ITabState> {
   render() {
     const node = this.props.node
     const parentNode = node.getParent() as TabSetNode
-    const style: JSMap<any> = node.styleWithPosition({
-      display: this.props.selected ? 'block' : 'none',
-    })
-
-    if (parentNode.isMaximized()) {
-      style.zIndex = 100
-    }
-
+    const style: JSMap<any> = node.styleWithPosition()
     const child = this.state.isShouldRendering && this.props.factory(node)
     return (
-      <TabWrapper onMouseDown={this.onMouseDown} onTouchStart={this.onMouseDown} style={style}>
+      <TabWrapper
+        isMaximized={parentNode.isMaximized()}
+        isSelected={this.props.selected}
+        onMouseDown={this.onMouseDown}
+        onTouchStart={this.onMouseDown}
+        style={style}
+      >
         {child}
       </TabWrapper>
     )

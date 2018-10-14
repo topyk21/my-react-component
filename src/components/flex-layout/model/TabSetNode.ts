@@ -10,7 +10,6 @@ import Node from 'components/flex-layout/model/Node'
 import Model from 'components/flex-layout/model/Model'
 import TabNode from 'components/flex-layout/model/TabNode'
 import RowNode from 'components/flex-layout/model/RowNode'
-import BorderNode from 'components/flex-layout/model/BorderNode'
 import IDraggable from 'components/flex-layout/model/IDraggable'
 import IDropTarget from 'components/flex-layout/model/IDropTarget'
 
@@ -38,7 +37,6 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
     attributeDefinitions.addInherited('classNameTabStrip', 'tabSetClassNameTabStrip')
     attributeDefinitions.addInherited('classNameHeader', 'tabSetClassNameHeader')
     attributeDefinitions.addInherited('enableTabStrip', 'tabSetEnableTabStrip')
-    attributeDefinitions.addInherited('borderInsets', 'tabSetBorderInsets')
     attributeDefinitions.addInherited('marginInsets', 'tabSetMarginInsets')
 
     attributeDefinitions.addInherited('headerHeight', 'tabSetHeaderHeight')
@@ -211,7 +209,6 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
 
     rect = rect.removeInsets(this.getAttr('marginInsets'))
     this.rect = rect
-    rect = rect.removeInsets(this.getAttr('borderInsets'))
 
     const showHeader = this.getName() !== undefined
     let y = 0
@@ -246,7 +243,7 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
       return // dock back to itself
     }
 
-    let dragParent = dragNode.getParent() as BorderNode | TabSetNode
+    let dragParent = dragNode.getParent() as TabSetNode
     let fromIndex = 0
     if (dragParent !== undefined) {
       fromIndex = dragParent.removeChild(dragNode)
@@ -262,22 +259,10 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
       index -= 1
     }
 
-    // for the tabset/border being removed from set the selected index
+    // for the tabset being removed from set the selected index
     if (dragParent !== undefined) {
       if (dragParent.getType() === TabSetNode.TYPE) {
         dragParent.setSelected(0)
-      } else if (dragParent.getType() === BorderNode.TYPE) {
-        if (dragParent.getSelected() !== -1) {
-          if (fromIndex === dragParent.getSelected() && dragParent.getChildren().length > 0) {
-            dragParent.setSelected(0)
-          } else if (fromIndex < dragParent.getSelected()) {
-            dragParent.setSelected(dragParent.getSelected() - 1)
-          } else if (fromIndex > dragParent.getSelected()) {
-            // leave selected index as is
-          } else {
-            dragParent.setSelected(-1)
-          }
-        }
       }
     }
 

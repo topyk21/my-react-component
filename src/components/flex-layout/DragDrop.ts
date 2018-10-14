@@ -1,6 +1,4 @@
 // tslint:disable:no-any
-import Rect from 'components/flex-layout/Rect'
-
 class DragDrop {
   static instance = new DragDrop()
 
@@ -16,11 +14,6 @@ class DragDrop {
   private fDragStart: ((pos: { clientX: number; clientY: number }) => boolean) | undefined
   /** @hidden @internal */
   private fDragCancel: ((wasDragging: boolean) => void) | undefined
-
-  /** @hidden @internal */
-  private glass: HTMLDivElement
-  /** @hidden @internal */
-  private manualGlassManagement: boolean = false
   /** @hidden @internal */
   private lastClick: number
   /** @hidden @internal */
@@ -32,19 +25,10 @@ class DragDrop {
   /** @hidden @internal */
   private startY: number = 0
   /** @hidden @internal */
-  private glassShowing: boolean = false
-  /** @hidden @internal */
   private dragging: boolean = false
 
   /** @hidden @internal */
   private constructor() {
-    this.glass = document.createElement('div')
-    this.glass.style.zIndex = '998'
-    this.glass.style.position = 'absolute'
-    this.glass.style.backgroundColor = 'white'
-    this.glass.style.opacity = '.00' // may need to be .01 for IE???
-    this.glass.style.filter = 'alpha(opacity=01)'
-
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
 
@@ -53,36 +37,6 @@ class DragDrop {
     this.lastClick = 0
     this.clickX = 0
     this.clickY = 0
-  }
-
-  // if you add the glass pane then you should remove it
-  addGlass(fCancel: (() => void) | undefined) {
-    if (!this.glassShowing) {
-      const glassRect = new Rect(
-        0,
-        0,
-        document.documentElement.clientWidth,
-        document.documentElement.clientHeight
-      )
-      glassRect.positionElement(this.glass)
-      document.body.appendChild(this.glass)
-      this.glass.tabIndex = -1
-      this.glass.focus()
-      this.glass.addEventListener('keydown', this.onKeyPress)
-      this.glassShowing = true
-      this.fDragCancel = fCancel
-      this.manualGlassManagement = false
-    } else {
-      // second call to addGlass (via dragstart)
-      this.manualGlassManagement = true
-    }
-  }
-
-  hideGlass() {
-    if (this.glassShowing) {
-      document.body.removeChild(this.glass)
-      this.glassShowing = false
-    }
   }
 
   startDrag(
@@ -95,18 +49,15 @@ class DragDrop {
     fDblClick?: ((event: Event) => void) | undefined
   ) {
     const posEvent = this.getLocationEvent(event)
-    this.addGlass(fDragCancel)
 
     if (event) {
       this.startX = posEvent.clientX
       this.startY = posEvent.clientY
-      this.glass.style.cursor = getComputedStyle(event.target as Element).cursor
       this.stopPropagation(event)
       this.preventDefault(event)
     } else {
       this.startX = 0
       this.startY = 0
-      this.glass.style.cursor = 'default'
     }
 
     this.dragging = false
@@ -135,7 +86,6 @@ class DragDrop {
   private onKeyPress(event: KeyboardEvent) {
     if (this.fDragCancel !== undefined && event.keyCode === 27) {
       // esc
-      this.hideGlass()
       document.removeEventListener('mousemove', this.onMouseMove)
       document.removeEventListener('mouseup', this.onMouseUp)
       this.fDragCancel(this.dragging)
@@ -188,7 +138,6 @@ class DragDrop {
     ) {
       this.dragging = true
       if (this.fDragStart) {
-        this.glass.style.cursor = 'move'
         this.dragging = this.fDragStart({ clientX: this.startX, clientY: this.startY })
       }
     }
@@ -207,10 +156,6 @@ class DragDrop {
 
     this.stopPropagation(event)
     this.preventDefault(event)
-
-    if (!this.manualGlassManagement) {
-      this.hideGlass()
-    }
 
     document.removeEventListener('mousemove', this.onMouseMove)
     document.removeEventListener('mouseup', this.onMouseUp)

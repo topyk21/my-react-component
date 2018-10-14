@@ -9,7 +9,6 @@ import SplitterNode from 'components/flex-layout/model/SplitterNode'
 import Node from 'components/flex-layout/model/Node'
 import Model from 'components/flex-layout/model/Model'
 import TabSetNode from 'components/flex-layout/model/TabSetNode'
-import BorderNode from 'components/flex-layout/model/BorderNode'
 import IDropTarget from 'components/flex-layout/model/IDropTarget'
 import IDraggable from 'components/flex-layout/model/IDraggable'
 
@@ -354,10 +353,6 @@ class RowNode extends Node implements IDropTarget {
 
     if (parent !== undefined && parent!.getType() === TabSetNode.TYPE) {
       parent.setSelected(0)
-    }
-
-    if (parent !== undefined && parent!.getType() === BorderNode.TYPE) {
-      parent.setSelected(-1)
     }
 
     let tabSet: TabSetNode | undefined
