@@ -24,23 +24,36 @@ class Rect {
   }
 
   equals(rect: Rect) {
-    if (
+    return (
       this.x === rect.x &&
       this.y === rect.y &&
       this.width === rect.width &&
       this.height === rect.height
-    ) {
-      return true
-    }
-    return false
+    )
+  }
+
+  getTop() {
+    return this.y
   }
 
   getBottom() {
     return this.y + this.height
   }
 
+  getLeft() {
+    return this.x
+  }
+
   getRight() {
     return this.x + this.width
+  }
+
+  getWidth() {
+    return this.width
+  }
+
+  getHeight() {
+    return this.height
   }
 
   positionElement(element: HTMLElement) {
@@ -50,7 +63,7 @@ class Rect {
   styleWithPosition(style: JSMap<any>) {
     style.left = this.x + 'px'
     style.top = this.y + 'px'
-    style.width = Math.max(0, this.width) + 'px' // need Math.max to prevent -ve, cause error in IE
+    style.width = Math.max(0, this.width) + 'px'
     style.height = Math.max(0, this.height) + 'px'
     style.position = 'absolute'
     return style
@@ -79,11 +92,10 @@ class Rect {
 
   /** @hidden @internal */
   getSize(orientation: Orientation) {
-    let prefSize = this.width
     if (orientation === Orientation.VERT) {
-      prefSize = this.height
+      return this.height
     }
-    return prefSize
+    return this.width
   }
 
   toString() {
