@@ -5,9 +5,9 @@ import { replace } from 'connected-react-router'
 import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 
-import { IReduxState } from 'lib/redux/redux-reducer'
-import SignForm from 'components/auth/SignForm'
-import { IUser, actionCreators as authActions } from 'components/auth/Widgets'
+import { IReduxState } from 'src/lib/redux/redux-reducer'
+import SignForm from 'src/components/auth/SignForm'
+import { IUser, actionCreators as authActions } from 'src/components/auth/Widgets'
 
 interface IStateProps {
   pending: boolean

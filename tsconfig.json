@@ -3,10 +3,7 @@
     "baseUrl": ".",
     "outDir": "build/dist",
     "paths": {
-      "*": [
-        "*",
-        "src/*"
-      ]
+      "*": ["*"]
     },
     "module": "commonjs",
     "target": "es6",

@@ -1,8 +1,8 @@
 import { persistReducer } from 'redux-persist'
 import { combineReducers } from 'redux'
-
 import storage from 'redux-persist/lib/storage'
-import auth, { IReduxState as IAuthReduxState } from 'components/auth/Widgets'
+
+import auth, { IReduxState as IAuthReduxState } from 'src/components/auth/Widgets'
 
 /**
  * [Intellisense의 Auto complete 지원을 위한 interface]

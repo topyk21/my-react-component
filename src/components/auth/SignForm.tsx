@@ -1,8 +1,8 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-import SignInIcon from 'components/auth/SignInIcon'
-import SignInBody from 'components/auth/SignInBody'
+import SignInIcon from 'src/components/auth/SignInIcon'
+import SignInBody from 'src/components/auth/SignInBody'
 
 interface ISignForm {
   pending: boolean

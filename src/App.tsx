@@ -8,13 +8,13 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import blue from '@material-ui/core/colors/blue'
 // Custom library
-import setStoreConfig from 'lib/redux/redux-store'
-import PrivateRoute from 'lib/react-router/private-route'
-import RouteHistory from 'lib/react-router/route-history'
+import setStoreConfig from 'src/lib/redux/redux-store'
+import PrivateRoute from 'src/lib/react-router/private-route'
+import RouteHistory from 'src/lib/react-router/route-history'
 // Container components
-import SignForm from 'components/auth/Container'
+import SignForm from 'src/components/auth/Container'
 // Page components
-import Page from 'pages/Page'
+import Page from 'src/pages/Page'
 
 /** Material-ui theme setting */
 const theme = createMuiTheme({

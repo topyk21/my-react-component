@@ -1,8 +1,8 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import { Layout as FlexLayout, Model } from 'components/flex-layout'
+import { Layout as FlexLayout, Model } from 'src/components/flex-layout'
 
-import 'components/flex-layout/static/css/light.css';
+import 'src/components/flex-layout/static/css/light.css'
 
 // tslint:disable-next-line
 interface IMainLayoutProps {}

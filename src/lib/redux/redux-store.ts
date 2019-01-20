@@ -4,8 +4,8 @@ import createSagaMiddleware from 'redux-saga'
 import { connectRouter, routerMiddleware } from 'connected-react-router'
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly'
 
-import rootReducer, { persistConfig } from 'lib/redux/redux-reducer'
-import RouteHistory from 'lib/react-router/route-history'
+import rootReducer, { persistConfig } from 'src/lib/redux/redux-reducer'
+import RouteHistory from 'src/lib/react-router/route-history'
 
 /** Async ajax 지원을 위한 open source로 redux-saga 채택  */
 const saga = createSagaMiddleware()

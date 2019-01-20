@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-import MainLayout from 'pages/MainLayout'
+import MainLayout from 'src/pages/MainLayout'
 
 const PageWrapper = styled.div`
   left: 0px;
