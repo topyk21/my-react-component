@@ -1,17 +1,14 @@
-// tslint:disable:no-any
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import styled from 'styled-components'
-
-import Rect from 'components/flex-layout/Rect'
-import Layout from 'components/flex-layout/view/Layout'
-import Actions from 'components/flex-layout/model/Actions'
-import TabNode from 'components/flex-layout/model/TabNode'
-import TabSetNode from 'components/flex-layout/model/TabSetNode'
-import RowNode from 'components/flex-layout/model/RowNode'
+import Rect from 'src/components/flex-layout/lib/Rect'
+import Actions from 'src/components/flex-layout/model/Actions'
+import TabNode from 'src/components/flex-layout/model/TabNode'
+import RowNode from 'src/components/flex-layout/model/RowNode'
+import TabSetNode from 'src/components/flex-layout/model/TabSetNode'
+import Layout from 'src/components/flex-layout/view/Layout'
 
 /** @hidden @internal */
-export interface ITabButtonProps {
+interface ITabButtonProps {
   layout: Layout
   node: TabNode
   show: boolean
@@ -22,62 +19,33 @@ export interface ITabButtonProps {
 interface ITabButtonState {
   editing: boolean
 }
+
 /** @hidden @internal */
-const TabButtonWrapper = styled<{ isSelected: boolean; isVisible: boolean; height: number }, 'div'>(
-  'div'
-)`
-  visibility: ${props => (props.isVisible ? 'visible' : 'hidden')};
-  height: ${props => props.height}px;
-  cursor: pointer;
-  padding: 2px 8px 3px 8px;
-  margin: 2px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  float: left;
-  vertical-align: top;
-  box-sizing: border-box;
-  color: ${props => (props.isSelected ? 'black' : 'gray')};
-  font-weight: bold;
-  background-color: ${props => (props.isSelected ? '#ddd' : '')};
-  &:hover {
-    color: black;
-  }
-`
-const TabButtonIcon = styled.img`
-  display: inline-block;
-`
-const TabButtonTitle = styled.div`
-  display: inline-block;
-`
-const TabButtonEditableTitle = styled<{ width: number }, 'input'>('input')`
-  width: ${props => props.width}px;
-  float: left;
-  border: none;
-  color: green;
-  background-color: white;
-  &:focus {
-    outline: none;
-  }
-`
-const TabButtonExit = styled.div`
-  display: inline-block;
-  margin-left: 5px;
-  &:hover {
-    color: red;
-  }
-`
+interface ICloseButtonProps {
+  onClick: (e: React.MouseEvent<HTMLElement>) => void
+  onMouseDown: (e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => void
+}
+
+/** @hidden @internal */
+const CloseButton: React.SFC<ICloseButtonProps> = props => (
+  <div
+    className={'flexlayout__tab_button_trailing'}
+    onMouseDown={props.onMouseDown}
+    onTouchStart={props.onMouseDown}
+    onClick={props.onClick}
+  />
+)
+
 /** @hidden @internal */
 class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
   contentWidth: number = 0
-
-  private tabButtonRef = React.createRef<any>()
-  private tabButtonTitleRef = React.createRef<any>()
+  selfRef = React.createRef<HTMLDivElement>()
+  contentRef = React.createRef<HTMLInputElement>()
 
   constructor(props: ITabButtonProps) {
     super(props)
     this.state = { editing: false }
-    this.onEndEdit = this.onEndEdit.bind(this)
+    this.onEndEdit = this.onEndEdit
   }
 
   componentDidMount() {
@@ -87,7 +55,7 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
   componentDidUpdate() {
     this.updateRect()
     if (this.state.editing) {
-      (this.tabButtonTitleRef.current as HTMLInputElement).select()
+      this.contentRef.current!.select()
     }
   }
 
@@ -99,8 +67,8 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
       'Move: ' + this.props.node.getName(),
       this.props.node,
       this.props.node.isEnableDrag(),
-      this.onClick.bind(this),
-      this.onDoubleClick.bind(this)
+      this.onClick,
+      this.onDoubleClick
     )
   }
 
@@ -123,20 +91,19 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
   }
 
   onEndEdit = (event: Event) => {
-    if (event.target !== this.tabButtonTitleRef.current) {
+    if (event.target !== this.contentRef.current) {
       this.setState({ editing: false })
       document.body.removeEventListener('mousedown', this.onEndEdit)
       document.body.removeEventListener('touchstart', this.onEndEdit)
     }
   }
 
-  onCloseTab = (event: React.MouseEvent<HTMLDivElement>) => {
+  onClose = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation()
 
     const tab = this.props.node
     const tabSet = tab.getParent() as TabSetNode
     const rowNode = tabSet.getParent() as RowNode
-
     this.props.layout.doAction(Actions.deleteTab(tab.getId()))
     if (tabSet.getChildren().length === 0) {
       const defaultTabSet = rowNode.getChildren()[0]
@@ -144,14 +111,27 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
     }
   }
 
-  updateRect() {
+  onCloseMouseDown = (
+    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+  ) => {
+    event.stopPropagation()
+  }
+
+  updateRect = () => {
     // record position of tab in node
     const clientRect = (ReactDOM.findDOMNode(this.props.layout) as Element).getBoundingClientRect()
-    const r = (this.tabButtonRef.current as Element).getBoundingClientRect()
+    const r = this.selfRef.current!.getBoundingClientRect()
     this.props.node.setTabRect(
       new Rect(r.left - clientRect.left, r.top - clientRect.top, r.width, r.height)
     )
-    this.contentWidth = (this.tabButtonTitleRef.current as Element).getBoundingClientRect().width
+    this.contentWidth = this.contentRef.current!.getBoundingClientRect().width
+  }
+
+  onTextBoxMouseDown = (
+    event: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>
+  ) => {
+    // console.log("onTextBoxMouseDown");
+    event.stopPropagation()
   }
 
   onTextBoxKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -174,37 +154,77 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
   }
 
   render() {
+    const cm = this.props.layout.getClassName
+    let classNames = cm('flexlayout__tab_button')
     const node = this.props.node
-    const icon = node.getIcon() && <TabButtonIcon src={node.getIcon()} />
-    const content = this.state.editing ? (
-      <TabButtonEditableTitle
-        width={this.contentWidth}
-        innerRef={this.tabButtonTitleRef}
-        type="text"
-        autoFocus={true}
-        defaultValue={node.getName()}
-        onKeyDown={this.onTextBoxKeyPress}
-      />
-    ) : (
-      <TabButtonTitle innerRef={this.tabButtonTitleRef}>{node.getName()}</TabButtonTitle>
-    )
-    const closeButton = this.props.node.isEnableClose() && (
-      <TabButtonExit onMouseDown={this.onCloseTab}>Χ</TabButtonExit>
+
+    if (this.props.selected) {
+      classNames += ' ' + cm('flexlayout__tab_button--selected')
+    } else {
+      classNames += ' ' + cm('flexlayout__tab_button--unselected')
+    }
+
+    if (this.props.node.getClassName() !== undefined) {
+      classNames += ' ' + this.props.node.getClassName()
+    }
+
+    let leadingContent
+
+    if (node.getIcon() !== undefined) {
+      leadingContent = <img src={node.getIcon()} />
+    }
+
+    // allow customization of leading contents (icon) and contents
+    const renderState = { leading: leadingContent, content: node.getName() }
+    this.props.layout.customizeTab(node, renderState)
+
+    const leading = (
+      <div className={cm('flexlayout__tab_button_leading')}>{renderState.leading}</div>
     )
 
+    let content = (
+      <div ref={this.contentRef} className={cm('flexlayout__tab_button_content')}>
+        {renderState.content}
+      </div>
+    )
+
+    if (this.state.editing) {
+      const contentStyle = { width: this.contentWidth + 'px' }
+      content = (
+        <input
+          style={contentStyle}
+          ref={this.contentRef}
+          className={cm('flexlayout__tab_button_textbox')}
+          type="text"
+          autoFocus
+          defaultValue={node.getName()}
+          onKeyDown={this.onTextBoxKeyPress}
+          onMouseDown={this.onTextBoxMouseDown}
+          onTouchStart={this.onTextBoxMouseDown}
+        />
+      )
+    }
+
+    let closeButton
+    if (this.props.node.isEnableClose()) {
+      closeButton = <CloseButton onClick={this.onClose} onMouseDown={this.onCloseMouseDown} />
+    }
+
     return (
-      <TabButtonWrapper
-        isSelected={this.props.selected}
-        isVisible={this.props.show}
-        height={this.props.height}
-        innerRef={this.tabButtonRef}
+      <div
+        ref={this.selfRef}
+        style={{
+          visibility: this.props.show ? 'visible' : 'hidden',
+          height: this.props.height,
+        }}
+        className={classNames}
         onMouseDown={this.onMouseDown}
         onTouchStart={this.onMouseDown}
       >
-        {icon}
+        {leading}
         {content}
         {closeButton}
-      </TabButtonWrapper>
+      </div>
     )
   }
 }

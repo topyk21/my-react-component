@@ -1,23 +1,41 @@
 // tslint:disable:no-any no-string-literal prefer-array-literal
-import Rect from 'components/flex-layout/Rect'
-import AttributeDefinitions from 'components/flex-layout/AttributeDefinitions'
-import Orientation from 'components/flex-layout/Orientation'
-import DockLocation from 'components/flex-layout/DockLocation'
-import DropInfo from 'components/flex-layout/DropInfo'
+import Rect from 'src/components/flex-layout/lib/Rect'
+import AttributeDefinitions from 'src/components/flex-layout/lib/AttributeDefinitions'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
+import DockLocation from 'src/components/flex-layout/lib/DockLocation'
+import DropInfo from 'src/components/flex-layout/lib/DropInfo'
 
-import SplitterNode from 'components/flex-layout/model/SplitterNode'
-import Node from 'components/flex-layout/model/Node'
-import Model from 'components/flex-layout/model/Model'
-import TabSetNode from 'components/flex-layout/model/TabSetNode'
-import IDropTarget from 'components/flex-layout/model/IDropTarget'
-import IDraggable from 'components/flex-layout/model/IDraggable'
+import SplitterNode from 'src/components/flex-layout/model/SplitterNode'
+import Node from 'src/components/flex-layout/model/Node'
+import Model from 'src/components/flex-layout/model/Model'
+import TabSetNode from 'src/components/flex-layout/model/TabSetNode'
+import BorderNode from 'src/components/flex-layout/model/BorderNode'
+import IDropTarget from 'src/components/flex-layout/model/IDropTarget'
+import IDraggable from 'src/components/flex-layout/model/IDraggable'
 
 class RowNode extends Node implements IDropTarget {
   static readonly TYPE = 'row'
   /** @hidden @internal */
+  static fromJson(json: any, model: Model) {
+    const newLayoutNode = new RowNode(model, json)
+
+    if (json.children !== undefined) {
+      for (const jsonChild of json.children) {
+        if (jsonChild.type === TabSetNode.TYPE) {
+          const child = TabSetNode.fromJson(jsonChild, model)
+          newLayoutNode.addChild(child)
+        } else {
+          const child = RowNode.fromJson(jsonChild, model)
+          newLayoutNode.addChild(child)
+        }
+      }
+    }
+    return newLayoutNode
+  }
+  /** @hidden @internal */
   private static attributeDefinitions = RowNode.createAttributeDefinitions()
   /** @hidden @internal */
-  private static createAttributeDefinitions() {
+  private static createAttributeDefinitions(): AttributeDefinitions {
     const attributeDefinitions = new AttributeDefinitions()
     attributeDefinitions.add('type', RowNode.TYPE, true)
     attributeDefinitions.add('id', undefined)
@@ -68,7 +86,7 @@ class RowNode extends Node implements IDropTarget {
     let fixedPixels = 0
     let prefPixels = 0
     let totalPrefWeight = 0
-    const drawChildren = this.getDrawChildren() as Array<RowNode | TabSetNode | SplitterNode>
+    const drawChildren = this.getDrawChildren() as RowNode[] | TabSetNode[] | SplitterNode[]
 
     for (const child of drawChildren) {
       const prefSize = child.getPrefSize(this.getOrientation())
@@ -195,7 +213,7 @@ class RowNode extends Node implements IDropTarget {
   }
 
   /** @hidden @internal */
-  getDrawChildren() {
+  getDrawChildren(): Node[] | undefined {
     if (this.dirty) {
       this.drawChildren = []
 
@@ -233,18 +251,13 @@ class RowNode extends Node implements IDropTarget {
           if (subchild instanceof RowNode) {
             let subChildrenTotal = 0
             const subChildChildren = subchild.getChildren()
-            // tslint:disable-next-line:prefer-for-of
-            for (let j = 0; j < subChildChildren.length; j += 1) {
-              const subsubChild = subChildChildren[j] as RowNode | TabSetNode
-              subChildrenTotal += subsubChild.getWeight()
+            for (const subChild of subChildChildren) {
+              subChildrenTotal += (subChild as RowNode | TabSetNode).getWeight()
             }
-            // tslint:disable-next-line:prefer-for-of
             for (let j = 0; j < subChildChildren.length; j += 1) {
-              const subsubChild = subChildChildren[j] as RowNode | TabSetNode
-              subsubChild.setWeight(
-                (child.getWeight() * subsubChild.getWeight()) / subChildrenTotal
-              )
-              this.addChild(subsubChild, i + j)
+              const subChild = subChildChildren[j] as RowNode | TabSetNode
+              subChild.setWeight((child.getWeight() * subChild.getWeight()) / subChildrenTotal)
+              this.addChild(subChild, i + j)
             }
           } else {
             subchild.setWeight(child.getWeight())
@@ -269,6 +282,7 @@ class RowNode extends Node implements IDropTarget {
       const child = new TabSetNode(this.model, { type: 'tabset' })
       this.addChild(child)
     }
+
     // console.log("b", this._model.toString());
   }
 
@@ -345,6 +359,7 @@ class RowNode extends Node implements IDropTarget {
   /** @hidden @internal */
   drop(dragNode: Node & IDraggable, location: DockLocation, index: number): void {
     const dockLocation = location
+
     const parent = dragNode.getParent()
 
     if (parent) {
@@ -353,6 +368,10 @@ class RowNode extends Node implements IDropTarget {
 
     if (parent !== undefined && parent!.getType() === TabSetNode.TYPE) {
       parent.setSelected(0)
+    }
+
+    if (parent !== undefined && parent!.getType() === BorderNode.TYPE) {
+      parent.setSelected(-1)
     }
 
     let tabSet: TabSetNode | undefined
@@ -404,7 +423,6 @@ class RowNode extends Node implements IDropTarget {
     }
 
     this.model.setActiveTabset(tabSet)
-
     this.model.tidy()
   }
 
@@ -419,25 +437,6 @@ class RowNode extends Node implements IDropTarget {
     })
 
     return json
-  }
-
-  /** @hidden @internal */
-  // tslint:disable-next-line
-  static _fromJson(json: any, model: Model) {
-    const newLayoutNode = new RowNode(model, json)
-
-    if (json.children !== undefined) {
-      for (const jsonChild of json.children) {
-        if (jsonChild.type === TabSetNode.TYPE) {
-          const child = TabSetNode.fromJson(jsonChild, model)
-          newLayoutNode.addChild(child)
-        } else {
-          const child = RowNode._fromJson(jsonChild, model)
-          newLayoutNode.addChild(child)
-        }
-      }
-    }
-    return newLayoutNode
   }
 
   isEnableDrop() {

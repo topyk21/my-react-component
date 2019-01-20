@@ -1,6 +1,6 @@
 // tslint:disable:no-any
-import Attribute from 'components/flex-layout/Attribute'
-import { JSMap } from 'components/flex-layout/Types'
+import Attribute from 'src/components/flex-layout/lib/Attribute'
+import { JSMap } from 'src/components/flex-layout/lib/Types'
 
 /** @hidden @internal */
 class AttributeDefinitions {

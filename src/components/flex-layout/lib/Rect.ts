@@ -1,6 +1,6 @@
 // tslint:disable:no-any
-import Orientation from 'components/flex-layout/Orientation'
-import { JSMap } from 'components/flex-layout/Types'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
+import { JSMap } from 'src/components/flex-layout/lib/Types'
 
 class Rect {
   static empty() {
@@ -24,36 +24,23 @@ class Rect {
   }
 
   equals(rect: Rect) {
-    return (
+    if (
       this.x === rect.x &&
       this.y === rect.y &&
       this.width === rect.width &&
       this.height === rect.height
-    )
-  }
-
-  getTop() {
-    return this.y
+    ) {
+      return true
+    }
+    return false
   }
 
   getBottom() {
     return this.y + this.height
   }
 
-  getLeft() {
-    return this.x
-  }
-
   getRight() {
     return this.x + this.width
-  }
-
-  getWidth() {
-    return this.width
-  }
-
-  getHeight() {
-    return this.height
   }
 
   positionElement(element: HTMLElement) {
@@ -92,14 +79,15 @@ class Rect {
 
   /** @hidden @internal */
   getSize(orientation: Orientation) {
+    let prefSize = this.width
     if (orientation === Orientation.VERT) {
-      return this.height
+      prefSize = this.height
     }
-    return this.width
+    return prefSize
   }
 
   toString() {
-    return `Rect: x=${this.x}, y=${this.y}, width=${this.width}, height=${this.height}`
+    return `(Rect: x='${this.x}', y='${this.y}', width='${this.width}', height='${this.height}')`
   }
 }
 

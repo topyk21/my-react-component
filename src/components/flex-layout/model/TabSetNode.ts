@@ -1,24 +1,46 @@
-// tslint:disable:no-any no-string-literal no-parameter-reassignment
-import Rect from 'components/flex-layout/Rect'
-import AttributeDefinitions from 'components/flex-layout/AttributeDefinitions'
-import Attribute from 'components/flex-layout/Attribute'
-import DockLocation from 'components/flex-layout/DockLocation'
-import DropInfo from 'components/flex-layout/DropInfo'
-import Orientation from 'components/flex-layout/Orientation'
+// tslint:disable:no-any no-string-literal max-line-length no-parameter-reassignment
+import Rect from 'src/components/flex-layout/lib/Rect'
+import AttributeDefinitions from 'src/components/flex-layout/lib/AttributeDefinitions'
+import Attribute from 'src/components/flex-layout/lib/Attribute'
+import DockLocation from 'src/components/flex-layout/lib/DockLocation'
+import DropInfo from 'src/components/flex-layout/lib/DropInfo'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
 
-import Node from 'components/flex-layout/model/Node'
-import Model from 'components/flex-layout/model/Model'
-import TabNode from 'components/flex-layout/model/TabNode'
-import RowNode from 'components/flex-layout/model/RowNode'
-import IDraggable from 'components/flex-layout/model/IDraggable'
-import IDropTarget from 'components/flex-layout/model/IDropTarget'
+import Node from 'src/components/flex-layout/model/Node'
+import Model from 'src/components/flex-layout/model/Model'
+import TabNode from 'src/components/flex-layout/model/TabNode'
+import RowNode from 'src/components/flex-layout/model/RowNode'
+import BorderNode from 'src/components/flex-layout/model/BorderNode'
+import IDraggable from 'src/components/flex-layout/model/IDraggable'
+import IDropTarget from 'src/components/flex-layout/model/IDropTarget'
 
 class TabSetNode extends Node implements IDraggable, IDropTarget {
   static readonly TYPE = 'tabset'
   /** @hidden @internal */
-  private static attributeDefinitions = TabSetNode.createAttributeDefinitions()
+  static fromJson(json: any, model: Model) {
+    const newLayoutNode = new TabSetNode(model, json)
+
+    if (json.children !== undefined) {
+      json.children.forEach((jsonChild: any) => {
+        const child = TabNode.fromJson(jsonChild, model)
+        newLayoutNode.addChild(child)
+      })
+    }
+
+    if (json.maximized && json.maximized === true) {
+      model.setMaximizedTabset(newLayoutNode)
+    }
+
+    if (json.active && json.active === true) {
+      model.setActiveTabset(newLayoutNode)
+    }
+
+    return newLayoutNode
+  }
   /** @hidden @internal */
-  private static createAttributeDefinitions() {
+  private static attributeDefinitions: AttributeDefinitions = TabSetNode.createAttributeDefinitions()
+  /** @hidden @internal */
+  private static createAttributeDefinitions(): AttributeDefinitions {
     const attributeDefinitions = new AttributeDefinitions()
     attributeDefinitions.add('type', TabSetNode.TYPE, true)
     attributeDefinitions.add('id', undefined).setType(Attribute.ID)
@@ -37,12 +59,14 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
     attributeDefinitions.addInherited('classNameTabStrip', 'tabSetClassNameTabStrip')
     attributeDefinitions.addInherited('classNameHeader', 'tabSetClassNameHeader')
     attributeDefinitions.addInherited('enableTabStrip', 'tabSetEnableTabStrip')
+    attributeDefinitions.addInherited('borderInsets', 'tabSetBorderInsets')
     attributeDefinitions.addInherited('marginInsets', 'tabSetMarginInsets')
 
     attributeDefinitions.addInherited('headerHeight', 'tabSetHeaderHeight')
     attributeDefinitions.addInherited('tabStripHeight', 'tabSetTabStripHeight')
     return attributeDefinitions
   }
+
   /** @hidden @internal */
   private contentRect?: Rect
   /** @hidden @internal */
@@ -209,6 +233,7 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
 
     rect = rect.removeInsets(this.getAttr('marginInsets'))
     this.rect = rect
+    rect = rect.removeInsets(this.getAttr('borderInsets'))
 
     const showHeader = this.getName() !== undefined
     let y = 0
@@ -243,13 +268,14 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
       return // dock back to itself
     }
 
-    let dragParent = dragNode.getParent() as TabSetNode
+    let dragParent = dragNode.getParent() as BorderNode | TabSetNode
     let fromIndex = 0
     if (dragParent !== undefined) {
       fromIndex = dragParent.removeChild(dragNode)
     }
-    // if dropping a tab back to same tabset and moving
-    // to forward position then reduce insertion index
+    // console.log("removed child: " + fromIndex);
+
+    // if dropping a tab back to same tabset and moving to forward position then reduce insertion index
     if (
       dragNode.getType() === TabNode.TYPE &&
       dragParent === this &&
@@ -259,10 +285,22 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
       index -= 1
     }
 
-    // for the tabset being removed from set the selected index
+    // for the tabset/border being removed from set the selected index
     if (dragParent !== undefined) {
       if (dragParent.getType() === TabSetNode.TYPE) {
         dragParent.setSelected(0)
+      } else if (dragParent.getType() === BorderNode.TYPE) {
+        if (dragParent.getSelected() !== -1) {
+          if (fromIndex === dragParent.getSelected() && dragParent.getChildren().length > 0) {
+            dragParent.setSelected(0)
+          } else if (fromIndex < dragParent.getSelected()) {
+            dragParent.setSelected(dragParent.getSelected() - 1)
+          } else if (fromIndex > dragParent.getSelected()) {
+            // leave selected index as is
+          } else {
+            dragParent.setSelected(-1)
+          }
+        }
       }
     }
 
@@ -345,29 +383,6 @@ class TabSetNode extends Node implements IDraggable, IDropTarget {
   /** @hidden @internal */
   updateAttrs(json: any) {
     TabSetNode.attributeDefinitions.update(json, this.attributes)
-  }
-
-  /** @hidden @internal */
-  // tslint:disable-next-line
-  static fromJson(json: any, model: Model) {
-    const newLayoutNode = new TabSetNode(model, json)
-
-    if (json.children !== undefined) {
-      json.children.forEach((jsonChild: any) => {
-        const child = TabNode._fromJson(jsonChild, model)
-        newLayoutNode.addChild(child)
-      })
-    }
-
-    if (json.maximized && json.maximized === true) {
-      model.setMaximizedTabset(newLayoutNode)
-    }
-
-    if (json.active && json.active === true) {
-      model.setActiveTabset(newLayoutNode)
-    }
-
-    return newLayoutNode
   }
 
   /** @hidden @internal */

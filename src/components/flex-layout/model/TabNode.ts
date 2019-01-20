@@ -1,20 +1,26 @@
-// tslint:disable:no-any no-string-literal
-import AttributeDefinitions from 'components/flex-layout/AttributeDefinitions'
-import Attribute from 'components/flex-layout/Attribute'
-import Rect from 'components/flex-layout/Rect'
-import { JSMap } from 'components/flex-layout/Types'
+// tslint:disable:no-any no-string-literal max-line-length
+import AttributeDefinitions from 'src/components/flex-layout/lib/AttributeDefinitions'
+import Attribute from 'src/components/flex-layout/lib/Attribute'
+import Rect from 'src/components/flex-layout/lib/Rect'
+import { JSMap } from 'src/components/flex-layout/lib/Types'
 
-import Node from 'components/flex-layout/model/Node'
-import Model from 'components/flex-layout/model/Model'
-import TabSetNode from 'components/flex-layout/model/TabSetNode'
-import IDraggable from 'components/flex-layout/model/IDraggable'
+import Node from 'src/components/flex-layout/model/Node'
+import TabSetNode from 'src/components/flex-layout/model/TabSetNode'
+import BorderNode from 'src/components/flex-layout/model/BorderNode'
+import Model from 'src/components/flex-layout/model/Model'
+import IDraggable from 'src/components/flex-layout/model/IDraggable'
 
 class TabNode extends Node implements IDraggable {
   static readonly TYPE = 'tab'
   /** @hidden @internal */
-  static attributeDefinitions = TabNode.createAttributeDefinitions()
+  static fromJson(json: any, model: Model) {
+    const newLayoutNode = new TabNode(model, json)
+    return newLayoutNode
+  }
   /** @hidden @internal */
-  private static createAttributeDefinitions() {
+  private static attributeDefinitions: AttributeDefinitions = TabNode.createAttributeDefinitions()
+  /** @hidden @internal */
+  private static createAttributeDefinitions(): AttributeDefinitions {
     const attributeDefinitions = new AttributeDefinitions()
     attributeDefinitions.add('type', TabNode.TYPE, true)
     attributeDefinitions.add('id', undefined).setType(Attribute.ID)
@@ -28,8 +34,12 @@ class TabNode extends Node implements IDraggable {
     attributeDefinitions.addInherited('enableRename', 'tabEnableRename').setType(Attribute.BOOLEAN)
     attributeDefinitions.addInherited('className', 'tabClassName').setType(Attribute.STRING)
     attributeDefinitions.addInherited('icon', 'tabIcon').setType(Attribute.STRING)
+    attributeDefinitions
+      .addInherited('enableRenderOnDemand', 'tabEnableRenderOnDemand')
+      .setType(Attribute.BOOLEAN)
     return attributeDefinitions
   }
+
   /** @hidden @internal */
   private tabRect?: Rect
   /** @hidden @internal */
@@ -64,8 +74,7 @@ class TabNode extends Node implements IDraggable {
 
   /**
    * Returns the config attribute that can be used to store node specific data that
-   * WILL be saved to the json.
-   * The config attribute should be changed via the action Actions.updateNodeAttributes rather
+   * WILL be saved to the json. The config attribute should be changed via the action Actions.updateNodeAttributes rather
    * than directly, for example:
    * this.state.model.doAction(
    *   FlexLayout.Actions.updateNodeAttributes(node.getId(), {config:myConfigObject}));
@@ -102,6 +111,10 @@ class TabNode extends Node implements IDraggable {
     return this.getAttributeAsStringOrUndefined('className')
   }
 
+  isEnableRenderOnDemand() {
+    return this.getAttr('enableRenderOnDemand') as boolean
+  }
+
   /** @hidden @internal */
   setName(name: string) {
     this.attributes['name'] = name
@@ -117,15 +130,9 @@ class TabNode extends Node implements IDraggable {
 
   /** @hidden @internal */
   delete() {
-    (this.parent as TabSetNode).remove(this)
+    const parent = this.parent as TabSetNode | BorderNode
+    parent.remove(this)
     this.fireEvent('close', {})
-  }
-
-  /** @hidden @internal */
-  // tslint:disable-next-line
-  static _fromJson(json: any, model: Model) {
-    const newLayoutNode = new TabNode(model, json)
-    return newLayoutNode
   }
 
   /** @hidden @internal */

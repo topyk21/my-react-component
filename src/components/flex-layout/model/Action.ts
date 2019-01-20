@@ -1,5 +1,5 @@
 // tslint:disable:no-any
-import { JSMap } from 'components/flex-layout/Types'
+import { JSMap } from 'src/components/flex-layout/lib/Types'
 
 class Action {
   type: string

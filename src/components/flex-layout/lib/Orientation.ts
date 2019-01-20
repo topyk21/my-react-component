@@ -7,10 +7,8 @@ class Orientation {
     }
     return Orientation.HORZ
   }
-
   /** @hidden @internal */
   private name: string
-
   /** @hidden @internal */
   private constructor(name: string) {
     this.name = name

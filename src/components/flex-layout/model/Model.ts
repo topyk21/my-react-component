@@ -1,31 +1,47 @@
-// tslint:disable:no-any no-string-literal no-parameter-reassignment
-import * as shortid from 'shortid'
+// tslint:disable:no-any no-string-literal max-line-length no-parameter-reassignment
+import { JSMap } from 'src/components/flex-layout/lib/Types'
+import DockLocation from 'src/components/flex-layout/lib/DockLocation'
+import AttributeDefinitions from 'src/components/flex-layout/lib/AttributeDefinitions'
+import Attribute from 'src/components/flex-layout/lib/Attribute'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
+import DropInfo from 'src/components/flex-layout/lib/DropInfo'
+import Rect from 'src/components/flex-layout/lib/Rect'
 
-import { JSMap } from 'components/flex-layout/Types'
-import DockLocation from 'components/flex-layout/DockLocation'
-import AttributeDefinitions from 'components/flex-layout/AttributeDefinitions'
-import Attribute from 'components/flex-layout/Attribute'
-import Orientation from 'components/flex-layout/Orientation'
-import DropInfo from 'components/flex-layout/DropInfo'
-import Rect from 'components/flex-layout/Rect'
-
-import Node from 'components/flex-layout/model/Node'
-import RowNode from 'components/flex-layout/model/RowNode'
-import Action from 'components/flex-layout/model/Action'
-import Actions from 'components/flex-layout/model/Actions'
-import TabNode from 'components/flex-layout/model/TabNode'
-import TabSetNode from 'components/flex-layout/model/TabSetNode'
-import IDraggable from 'components/flex-layout/model/IDraggable'
-import IDropTarget from 'components/flex-layout/model/IDropTarget'
+import Node from 'src/components/flex-layout/model/Node'
+import RowNode from 'src/components/flex-layout/model/RowNode'
+import Action from 'src/components/flex-layout/model/Action'
+import Actions from 'src/components/flex-layout/model/Actions'
+import TabNode from 'src/components/flex-layout/model/TabNode'
+import TabSetNode from 'src/components/flex-layout/model/TabSetNode'
+import BorderSet from 'src/components/flex-layout/model/BorderSet'
+import BorderNode from 'src/components/flex-layout/model/BorderNode'
+import IDraggable from 'src/components/flex-layout/model/IDraggable'
+import IDropTarget from 'src/components/flex-layout/model/IDropTarget'
 
 /**
  * Class containing the Tree of Nodes used by the FlexLayout component
  */
 class Model {
+  /**
+   * Loads the model from the given json object
+   * @param json the json model to load
+   * @returns {Model} a new Model object
+   */
+  static fromJson(json: any) {
+    const model = new Model()
+    Model.attributeDefinitions.fromJson(json.global, model.attributes)
+
+    if (json.borders) {
+      model.borders = BorderSet.fromJson(json.borders, model)
+    }
+    model.root = RowNode.fromJson(json.layout, model)
+    model.tidy() // initial tidy of node tree
+    return model
+  }
   /** @hidden @internal */
-  private static attributeDefinitions = Model.createAttributeDefinitions()
+  private static attributeDefinitions: AttributeDefinitions = Model.createAttributeDefinitions()
   /** @hidden @internal */
-  private static createAttributeDefinitions() {
+  private static createAttributeDefinitions(): AttributeDefinitions {
     const attributeDefinitions = new AttributeDefinitions()
     // splitter
     attributeDefinitions
@@ -43,6 +59,8 @@ class Model {
     attributeDefinitions.add('tabEnableRename', true).setType(Attribute.BOOLEAN)
     attributeDefinitions.add('tabClassName', undefined).setType(Attribute.STRING)
     attributeDefinitions.add('tabIcon', undefined).setType(Attribute.STRING)
+    attributeDefinitions.add('tabEnableRenderOnDemand', true).setType(Attribute.BOOLEAN)
+    attributeDefinitions.add('tabDragSpeed', 0.3).setType(Attribute.NUMBER)
 
     // tabset
     attributeDefinitions.add('tabSetEnableDeleteWhenEmpty', true).setType(Attribute.BOOLEAN)
@@ -64,7 +82,13 @@ class Model {
     attributeDefinitions
       .add('tabSetMarginInsets', { top: 0, right: 0, bottom: 0, left: 0 })
       .setType(Attribute.JSON)
+    attributeDefinitions
+      .add('tabSetBorderInsets', { top: 0, right: 0, bottom: 0, left: 0 })
+      .setType(Attribute.JSON)
 
+    attributeDefinitions.add('borderBarSize', 25)
+    attributeDefinitions.add('borderEnableDrop', true).setType(Attribute.BOOLEAN)
+    attributeDefinitions.add('borderClassName', undefined).setType(Attribute.STRING)
     return attributeDefinitions
   }
 
@@ -73,15 +97,24 @@ class Model {
   /** @hidden @internal */
   private idMap: JSMap<Node>
   /** @hidden @internal */
+  private nextId: number
+  /** @hidden @internal */
   private changeListener?: (() => void)
   /** @hidden @internal */
   private root?: RowNode
+  /** @hidden @internal */
+  private borders: BorderSet
   /** @hidden @internal */
   private onAllowDrop?: (dragNode: Node, dropInfo: DropInfo) => boolean
   /** @hidden @internal */
   private maximizedTabSet?: TabSetNode
   /** @hidden @internal */
   private activeTabSet?: TabSetNode
+  /** @hidden @internal */
+  private borderRects: { inner: Rect; outer: Rect } = {
+    inner: Rect.empty(),
+    outer: Rect.empty(),
+  }
 
   /**
    * 'private' constructor. Use the static method Model.fromJson(json) to create a model
@@ -91,6 +124,8 @@ class Model {
   private constructor() {
     this.attributes = {}
     this.idMap = {}
+    this.nextId = 0
+    this.borders = new BorderSet(this)
   }
 
   /** @hidden @internal */
@@ -131,11 +166,25 @@ class Model {
   }
 
   /**
+   * Gets the
+   * @returns {BorderSet|*}
+   */
+  getBorderSet() {
+    return this.borders
+  }
+
+  /** @hidden @internal */
+  getOuterInnerRects() {
+    return this.borderRects
+  }
+
+  /**
    * Visits all the nodes in the model and calls the given function for each
    * @param fn a function that takes visited node and a integer level as parameters
    */
   visitNodes(fn: (node: Node, level: number) => void) {
-    (this.root as RowNode).forEachNode(fn, 0)
+    this.borders.forEachNode(fn)
+    this.root!.forEachNode(fn, 0)
   }
 
   /**
@@ -157,7 +206,11 @@ class Model {
       case Actions.ADD_NODE: {
         const newNode = new TabNode(this, action.data['json'])
         const toNode = this.idMap[action.data['toNode']] as Node & IDraggable
-        if (toNode instanceof TabSetNode || toNode instanceof RowNode) {
+        if (
+          toNode instanceof TabSetNode ||
+          toNode instanceof BorderNode ||
+          toNode instanceof RowNode
+        ) {
           toNode.drop(
             newNode,
             DockLocation.getByName(action.data['location']),
@@ -170,7 +223,11 @@ class Model {
         const fromNode = this.idMap[action.data['fromNode']] as Node & IDraggable
         if (fromNode instanceof TabNode || fromNode instanceof TabSetNode) {
           const toNode = this.idMap[action.data['toNode']] as Node & IDropTarget
-          if (toNode instanceof TabSetNode || toNode instanceof RowNode) {
+          if (
+            toNode instanceof TabSetNode ||
+            toNode instanceof BorderNode ||
+            toNode instanceof RowNode
+          ) {
             toNode.drop(
               fromNode,
               DockLocation.getByName(action.data['location']),
@@ -201,7 +258,13 @@ class Model {
           const parent = tabNode.getParent() as Node
           const pos = parent.getChildren().indexOf(tabNode)
 
-          if (parent instanceof TabSetNode) {
+          if (parent instanceof BorderNode) {
+            if (parent.getSelected() === pos) {
+              parent.setSelected(-1)
+            } else {
+              parent.setSelected(pos)
+            }
+          } else if (parent instanceof TabSetNode) {
             if (parent.getSelected() !== pos) {
               parent.setSelected(pos)
             }
@@ -227,6 +290,13 @@ class Model {
         ) {
           this.adjustSplitSide(node1, action.data['weight1'], action.data['pixelWidth1'])
           this.adjustSplitSide(node2, action.data['weight2'], action.data['pixelWidth2'])
+        }
+        break
+      }
+      case Actions.ADJUST_BORDER_SPLIT: {
+        const node = this.idMap[action.data['node']]
+        if (node instanceof BorderNode) {
+          node.setSize(action.data['pos'])
         }
         break
       }
@@ -292,22 +362,10 @@ class Model {
     this.visitNodes(node => {
       node.fireEvent('save', undefined)
     })
+
+    json.borders = this.borders.toJson()
     json.layout = (this.root as RowNode).toJson()
     return json
-  }
-
-  /**
-   * Loads the model from the given json object
-   * @param json the json model to load
-   * @returns {Model} a new Model object
-   */
-  // tslint:disable-next-line
-  static fromJson(json: any) {
-    const model = new Model()
-    Model.attributeDefinitions.fromJson(json.global, model.attributes)
-    model.root = RowNode._fromJson(json.layout, model)
-    model.tidy() // initial tidy of node tree
-    return model
   }
 
   getSplitterSize() {
@@ -323,7 +381,7 @@ class Model {
     const id = node.getId()
     if (this.idMap[id] !== undefined) {
       // tslint:disable-next-line
-      throw `Error: each node must have a unique id, duplicate id: ${node.getId()}`
+      throw `Error: each node must have a unique id, duplicate id: '${node.getId()}'`
     }
 
     if (node.getType() !== 'splitter') {
@@ -333,20 +391,27 @@ class Model {
 
   /** @hidden @internal */
   layout(rect: Rect) {
-    (this.root as RowNode).layout(rect)
+    // let start = Date.now();
+    this.borderRects = this.borders.layoutBorder({ outer: rect, inner: rect })
+    rect = this.borderRects.inner.removeInsets(this.getAttribute('marginInsets'))
+    this.root!.layout(rect)
     return rect
+    // console.log("layout time: " + (Date.now() - start));
   }
 
   /** @hidden @internal */
   findDropTargetNode(dragNode: Node & IDraggable, x: number, y: number) {
-    const node = (this.root as RowNode).findDropTargetNode(dragNode, x, y)
+    let node = (this.root as RowNode).findDropTargetNode(dragNode, x, y)
+    if (node === undefined) {
+      node = this.borders.findDropTargetNode(dragNode, x, y)
+    }
     return node
   }
 
   /** @hidden @internal */
   tidy() {
     // console.log("before _tidy", this.toString());
-    (this.root as RowNode).tidy()
+    if (this.root) this.root.tidy()
     // console.log("after _tidy", this.toString());
   }
 
@@ -356,8 +421,13 @@ class Model {
   }
 
   /** @hidden @internal */
-  getUniqueId() {
-    return shortid.generate()
+  nextUniqueId() {
+    this.nextId += 1
+    while (this.idMap['#' + this.nextId] !== undefined) {
+      this.nextId += 1
+    }
+
+    return '#' + this.nextId
   }
 
   /** @hidden @internal */
@@ -367,8 +437,7 @@ class Model {
 
   /**
    * Sets a function to allow/deny dropping a node
-   * @param onAllowDrop function that takes the drag node and DropInfo and
-   *                    returns true if the drop is allowed
+   * @param onAllowDrop function that takes the drag node and DropInfo and returns true if the drop is allowed
    */
   setOnAllowDrop(onAllowDrop: (dragNode: Node, dropInfo: DropInfo) => boolean) {
     this.onAllowDrop = onAllowDrop

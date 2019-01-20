@@ -1,8 +1,7 @@
-import DropInfo from 'components/flex-layout/DropInfo'
-import DockLocation from 'components/flex-layout/DockLocation'
-
-import Node from 'components/flex-layout/model/Node'
-import IDraggable from 'components/flex-layout/model/IDraggable'
+import Node from 'src/components/flex-layout/model/Node'
+import IDraggable from 'src/components/flex-layout/model/IDraggable'
+import DropInfo from 'src/components/flex-layout/lib/DropInfo'
+import DockLocation from 'src/components/flex-layout/lib/DockLocation'
 
 export default interface IDropTarget {
   /** @hidden @internal */

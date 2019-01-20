@@ -1,13 +1,13 @@
 // tslint:disable:no-any no-string-literal no-parameter-reassignment
-import Rect from 'components/flex-layout/Rect'
-import AttributeDefinitions from 'components/flex-layout/AttributeDefinitions'
-import Orientation from 'components/flex-layout/Orientation'
-import DockLocation from 'components/flex-layout/DockLocation'
-import DropInfo from 'components/flex-layout/DropInfo'
-import { JSMap } from 'components/flex-layout/Types'
+import Rect from 'src/components/flex-layout/lib/Rect'
+import AttributeDefinitions from 'src/components/flex-layout/lib/AttributeDefinitions'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
+import DockLocation from 'src/components/flex-layout/lib/DockLocation'
+import DropInfo from 'src/components/flex-layout/lib/DropInfo'
+import { JSMap } from 'src/components/flex-layout/lib/Types'
 
-import Model from 'components/flex-layout/model/Model'
-import IDraggable from 'components/flex-layout/model/IDraggable'
+import Model from 'src/components/flex-layout/model/Model'
+import IDraggable from 'src/components/flex-layout/model/IDraggable'
 
 abstract class Node {
   /** @hidden @internal */
@@ -37,10 +37,17 @@ abstract class Node {
     this.attributes = {}
     this.children = []
     this.fixed = false
-    this.rect = Rect.empty()
+    this.rect = new Rect(0, 0, 0, 0)
     this.visible = false
     this.listeners = {}
   }
+  // implemented by subclasses
+  /** @hidden @internal */
+  abstract updateAttrs(json: any): void
+  /** @hidden @internal */
+  abstract getAttributeDefinitions(): AttributeDefinitions
+  /** @hidden @internal */
+  abstract toJson(): any
 
   getId() {
     let id = this.attributes['id']
@@ -48,7 +55,7 @@ abstract class Node {
       return id as string
     }
 
-    id = this.model.getUniqueId()
+    id = this.model.nextUniqueId()
     this.setId(id)
 
     return id as string
@@ -136,11 +143,6 @@ abstract class Node {
       this.fireEvent('visibility', { visible })
       this.visible = visible
     }
-  }
-
-  /** @hidden @internal */
-  getDrawChildren(): Node[] | undefined {
-    return this.children
   }
 
   /** @hidden @internal */
@@ -282,17 +284,14 @@ abstract class Node {
   }
 
   /** @hidden @internal */
+  getDrawChildren(): Node[] | undefined {
+    return this.children
+  }
+
+  /** @hidden @internal */
   toAttributeString() {
     return JSON.stringify(this.attributes, undefined, '\t')
   }
-
-  // implemented by subclasses
-  /** @hidden @internal */
-  abstract updateAttrs(json: any): void
-  /** @hidden @internal */
-  abstract getAttributeDefinitions(): AttributeDefinitions
-  /** @hidden @internal */
-  abstract toJson(): any
 
   /** @hidden @internal */
   protected getAttributeAsStringOrUndefined(attr: string) {

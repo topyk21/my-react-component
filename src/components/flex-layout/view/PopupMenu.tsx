@@ -1,47 +1,33 @@
-// tslint:disable:no-any
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import styled from 'styled-components'
 
 /** @hidden @internal */
-interface IPopupMenuItem {
+interface IPopupMenuProps {
+  element: Element
+  items: IPoupMenuItem[]
+  onHide: () => void
+  onSelect: (item: { index: number; name: string }) => void
+  classNameMapper: (defaultClassName: string) => string
+}
+/** @hidden @internal */
+interface IPoupMenuItem {
   index: number
   name: string
 }
-/** @hidden @internal */
-export interface IPopupMenuProps {
-  element: Element
-  items: IPopupMenuItem[]
-  onHide: () => void
-  onSelect: (item: IPopupMenuItem) => void
-}
-/** @hidden @internal */
-const PoupupItem = styled.div`
-  padding: 2px 10px 2px 10px;
-  &:hover {
-    background-color: lightgray;
-  }
-`
-/** @hidden @internal */
-const PoupupMenuWrapper = styled.div``
 
 /** @hidden @internal */
-class PopupMenu extends React.Component<IPopupMenuProps, any> {
-  static show(
+class PopupMenu extends React.Component<IPopupMenuProps, {}> {
+  static show = (
     triggerElement: Element,
-    items: IPopupMenuItem[],
-    onSelect: (item: IPopupMenuItem) => void
-  ) {
+    items: IPoupMenuItem[],
+    onSelect: (item: { index: number; name: string }) => void,
+    classNameMapper: (defaultClassName: string) => string
+  ) => {
     const triggerRect = triggerElement.getBoundingClientRect()
     const docRect = document.body.getBoundingClientRect()
 
     const elm = document.createElement('div')
-    elm.style.boxShadow = 'inset 0 0 5px rgba(0, 0, 0, .15)'
-    elm.style.border = '1px solid lightgrey'
-    elm.style.borderRadius = '3px'
-    elm.style.position = 'absolute'
-    elm.style.zIndex = '1000'
-    elm.style.background = 'white'
+    elm.className = classNameMapper('flexlayout__popup_menu_container')
     elm.style.right = docRect.right - triggerRect.right + 'px'
     elm.style.top = triggerRect.bottom + 'px'
     document.body.appendChild(elm)
@@ -52,13 +38,18 @@ class PopupMenu extends React.Component<IPopupMenuProps, any> {
     }
 
     ReactDOM.render(
-      <PopupMenu element={elm} onSelect={onSelect} onHide={onHide} items={items} />,
+      <PopupMenu
+        element={elm}
+        onSelect={onSelect}
+        onHide={onHide}
+        items={items}
+        classNameMapper={classNameMapper}
+      />,
       elm
     )
   }
-
-  items: IPopupMenuItem[] = []
-  hidden: boolean
+  items: IPoupMenuItem[] = []
+  hidden: boolean = true
   elm?: Element
 
   constructor(props: IPopupMenuProps) {
@@ -75,6 +66,7 @@ class PopupMenu extends React.Component<IPopupMenuProps, any> {
   }
 
   onDocMouseUp = (event: Event) => setTimeout(() => this.hide(), 0)
+
   hide = () => {
     if (!this.hidden) {
       this.props.onHide()
@@ -82,7 +74,7 @@ class PopupMenu extends React.Component<IPopupMenuProps, any> {
     }
   }
 
-  onItemClick = (item: IPopupMenuItem, event: Event) => {
+  onItemClick = (item: IPoupMenuItem, event: Event) => {
     this.props.onSelect(item)
     this.hide()
     event.stopPropagation()
@@ -90,12 +82,16 @@ class PopupMenu extends React.Component<IPopupMenuProps, any> {
 
   render() {
     const items = this.props.items.map(item => (
-      <PoupupItem key={item.index} onClick={this.onItemClick.bind(this, item)}>
+      <div
+        key={item.index}
+        className={this.props.classNameMapper('flexlayout__popup_menu_item')}
+        onClick={this.onItemClick.bind(this, item)}
+      >
         {item.name}
-      </PoupupItem>
+      </div>
     ))
 
-    return <PoupupMenuWrapper>{items}</PoupupMenuWrapper>
+    return <div className={this.props.classNameMapper('flexlayout__popup_menu')}>{items}</div>
   }
 }
 

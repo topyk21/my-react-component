@@ -1,6 +1,6 @@
-import Rect from 'components/flex-layout/Rect'
-import Orientation from 'components/flex-layout/Orientation'
-import { JSMap } from 'components/flex-layout/Types'
+import Rect from 'src/components/flex-layout/lib/Rect'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
+import { JSMap } from 'src/components/flex-layout/lib/Types'
 
 class DockLocation {
   static values: JSMap<DockLocation> = {}
@@ -10,25 +10,17 @@ class DockLocation {
   static RIGHT = new DockLocation('right', Orientation.HORZ, 1)
   static CENTER = new DockLocation('center', Orientation.VERT, 0)
   /** @hidden @internal */
-  static getByName(name: string) {
+  static getByName(name: string): DockLocation {
     return DockLocation.values[name]
   }
-
   /** @hidden @internal */
   static getLocation(rect: Rect, x: number, y: number) {
-    let ret
-    if (x < rect.x + rect.width / 4) {
-      ret = DockLocation.LEFT
-    } else if (x > rect.getRight() - rect.width / 4) {
-      ret = DockLocation.RIGHT
-    } else if (y < rect.y + rect.height / 4) {
-      ret = DockLocation.TOP
-    } else if (y > rect.getBottom() - rect.height / 4) {
-      ret = DockLocation.BOTTOM
-    } else {
-      ret = DockLocation.CENTER
-    }
-    return ret
+    if (x < rect.x + rect.width / 4) return DockLocation.LEFT
+    if (x > rect.getRight() - rect.width / 4) return DockLocation.RIGHT
+    if (y < rect.y + rect.height / 4) return DockLocation.TOP
+    if (y > rect.getBottom() - rect.height / 4) return DockLocation.BOTTOM
+
+    return DockLocation.CENTER
   }
 
   /** @hidden @internal */
@@ -72,28 +64,24 @@ class DockLocation {
 
   /** @hidden @internal */
   split(rect: Rect, size: number) {
-    let start
-    let end
+    let r1
+    let r2
     switch (this) {
       case DockLocation.TOP:
-        start = new Rect(rect.x, rect.y, rect.width, size)
-        end = new Rect(rect.x, rect.y + size, rect.width, rect.height - size)
-        break
+        r1 = new Rect(rect.x, rect.y, rect.width, size)
+        r2 = new Rect(rect.x, rect.y + size, rect.width, rect.height - size)
+      case DockLocation.BOTTOM:
+        r1 = new Rect(rect.x, rect.getBottom() - size, rect.width, size)
+        r2 = new Rect(rect.x, rect.y, rect.width, rect.height - size)
       case DockLocation.LEFT:
-        start = new Rect(rect.x, rect.y, size, rect.height)
-        end = new Rect(rect.x + size, rect.y, rect.width - size, rect.height)
-        break
-      case DockLocation.RIGHT:
-        start = new Rect(rect.getRight() - size, rect.y, size, rect.height)
-        end = new Rect(rect.x, rect.y, rect.width - size, rect.height)
-        break
+        r1 = new Rect(rect.x, rect.y, size, rect.height)
+        r2 = new Rect(rect.x + size, rect.y, rect.width - size, rect.height)
       default:
-        // DockLocation.BOTTOM
-        start = new Rect(rect.x, rect.getBottom() - size, rect.width, size)
-        end = new Rect(rect.x, rect.y, rect.width, rect.height - size)
-        break
+        // case DockLocation.RIGHT:
+        r1 = new Rect(rect.getRight() - size, rect.y, size, rect.height)
+        r2 = new Rect(rect.x, rect.y, rect.width - size, rect.height)
     }
-    return { start, end }
+    return { start: r1, end: r2 }
   }
 
   /** @hidden @internal */
@@ -101,18 +89,18 @@ class DockLocation {
     switch (this) {
       case DockLocation.TOP:
         return DockLocation.BOTTOM
+      case DockLocation.BOTTOM:
+        return DockLocation.TOP
       case DockLocation.LEFT:
         return DockLocation.RIGHT
-      case DockLocation.RIGHT:
-        return DockLocation.LEFT
       default:
-        // DockLocation.BOTTOM
-        return DockLocation.TOP
+        // case DockLocation.RIGHT:
+        return DockLocation.LEFT
     }
   }
 
   toString() {
-    return `DockLocation: name=${this.name}', orientation=${this.orientation}`
+    return `(DockLocation: name='${this.name}', orientation='${this.orientation}')`
   }
 }
 

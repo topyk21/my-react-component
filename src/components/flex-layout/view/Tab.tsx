@@ -1,15 +1,12 @@
-// tslint:disable:no-any
 import * as React from 'react'
-import styled from 'styled-components'
-
-import { JSMap } from 'components/flex-layout/Types'
-import TabSetNode from 'components/flex-layout/model/TabSetNode'
-import TabNode from 'components/flex-layout/model/TabNode'
-import Actions from 'components/flex-layout/model/Actions'
-import Layout from 'components/flex-layout/view/Layout'
+import { JSMap } from 'src/components/flex-layout/lib/Types'
+import TabSetNode from 'src/components/flex-layout/model/TabSetNode'
+import TabNode from 'src/components/flex-layout/model/TabNode'
+import Actions from 'src/components/flex-layout/model/Actions'
+import Layout from 'src/components/flex-layout/view/Layout'
 
 /** @hidden @internal */
-export interface ITabProps {
+interface ITabProps {
   layout: Layout
   selected: boolean
   node: TabNode
@@ -17,20 +14,14 @@ export interface ITabProps {
 }
 /** @hidden @internal */
 interface ITabState {
-  isShouldRendering: boolean
+  renderComponent: boolean
 }
-/** @hidden @internal */
-const TabWrapper = styled<{ isSelected: boolean; isMaximized: boolean }, 'div'>('div')`
-  overflow: auto;
-  box-sizing: border-box;
-  display: ${props => (props.isSelected ? 'display' : 'none')};
-  z-index: ${props => props.isMaximized && '100'};
-`
+
 /** @hidden @internal */
 class Tab extends React.Component<ITabProps, ITabState> {
   constructor(props: ITabProps) {
     super(props)
-    this.state = { isShouldRendering: props.selected }
+    this.state = { renderComponent: !props.node.isEnableRenderOnDemand() || props.selected }
   }
 
   componentDidMount() {
@@ -42,9 +33,10 @@ class Tab extends React.Component<ITabProps, ITabState> {
   }
 
   componentWillReceiveProps(newProps: ITabProps) {
-    if (!this.state.isShouldRendering && newProps.selected) {
+    if (!this.state.renderComponent && newProps.selected) {
       // load on demand
-      this.setState({ isShouldRendering: true })
+      // console.log("load on demand: " + this.props.node.getName());
+      this.setState({ renderComponent: true })
     }
   }
 
@@ -58,20 +50,32 @@ class Tab extends React.Component<ITabProps, ITabState> {
   }
 
   render() {
+    const cm = this.props.layout.getClassName
     const node = this.props.node
     const parentNode = node.getParent() as TabSetNode
-    const style: JSMap<any> = node.styleWithPosition()
-    const child = this.state.isShouldRendering && this.props.factory(node)
+    // tslint:disable-next-line:no-any
+    const style: JSMap<any> = node.styleWithPosition({
+      display: this.props.selected ? 'block' : 'none',
+    })
+
+    if (parentNode.isMaximized()) {
+      style.zIndex = 100
+    }
+
+    let child
+    if (this.state.renderComponent) {
+      child = this.props.factory(node)
+    }
+
     return (
-      <TabWrapper
-        isMaximized={parentNode.isMaximized()}
-        isSelected={this.props.selected}
+      <div
+        className={cm('flexlayout__tab')}
         onMouseDown={this.onMouseDown}
         onTouchStart={this.onMouseDown}
         style={style}
       >
         {child}
-      </TabWrapper>
+      </div>
     )
   }
 }

@@ -1,50 +1,24 @@
-// tslint:disable:no-any
 import * as React from 'react'
-import styled from 'styled-components'
-
-import DragDrop from 'components/flex-layout/DragDrop'
-import Orientation from 'components/flex-layout/Orientation'
-import Actions from 'components/flex-layout/model/Actions'
-import SplitterNode from 'components/flex-layout/model/SplitterNode'
-import RowNode from 'components/flex-layout/model/RowNode'
-import Layout from 'components/flex-layout/view/Layout'
+import * as ReactDOM from 'react-dom'
+import DragDrop from 'src/components/flex-layout/lib/DragDrop'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
+import Node from 'src/components/flex-layout/model/Node'
+import BorderNode from 'src/components/flex-layout/model/BorderNode'
+import Actions from 'src/components/flex-layout/model/Actions'
+import SplitterNode from 'src/components/flex-layout/model/SplitterNode'
+import RowNode from 'src/components/flex-layout/model/RowNode'
+import Layout from 'src/components/flex-layout/view/Layout'
 
 /** @hidden @internal */
-export interface ISplitterProps {
-  node: SplitterNode
+interface ISplitterProps {
   layout: Layout
-  layoutRef: React.RefObject<HTMLDivElement>
+  node: SplitterNode
 }
+
 /** @hidden @internal */
-export interface ISplitterState {
-  isDragging: boolean
-}
-/** @hidden @internal */
-const StaticSplitter = styled<{ isHorizontal: boolean }, 'div'>('div')`
-  background-color: #ddd;
-  cursor: ${props => (props.isHorizontal ? 'ns-resize' : 'ew-resize')};
-  &:hover {
-    background-color: #ccc;
-  }
-`
-/** @hidden @internal */
-// const DraggingSplitter = styled.div`
-//   position: absolute;
-//   background-color: #2196F3;
-//   border-radius: 5px;
-//   z-index: 1000;
-// `;
-/** @hidden @internal */
-class Splitter extends React.Component<ISplitterProps, ISplitterState> {
+class Splitter extends React.Component<ISplitterProps, {}> {
   pBounds?: number[]
   outlineDiv?: HTMLDivElement
-
-  constructor(props: ISplitterProps) {
-    super(props)
-    this.state = {
-      isDragging: false,
-    }
-  }
 
   onMouseDown = (
     event: Event | React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>
@@ -57,21 +31,19 @@ class Splitter extends React.Component<ISplitterProps, ISplitterState> {
       this.onDragCancel
     )
     const parentNode = this.props.node.getParent() as RowNode
-    const rootdiv = this.props.layoutRef.current!
     this.pBounds = parentNode.getSplitterBounds(this.props.node)
+    const rootdiv = ReactDOM.findDOMNode(this.props.layout) as Element
     this.outlineDiv = document.createElement('div')
     this.outlineDiv.style.position = 'absolute'
-    this.outlineDiv.style.backgroundColor = '#2196F3'
-    this.outlineDiv.style.borderRadius = '5px'
-    this.outlineDiv.style.zIndex = '1000'
+    this.outlineDiv.className = this.props.layout.getClassName('flexlayout__splitter_drag')
     this.outlineDiv.style.cursor =
       this.props.node.getOrientation() === Orientation.HORZ ? 'ns-resize' : 'ew-resize'
     this.props.node.getRect().positionElement(this.outlineDiv)
     rootdiv.appendChild(this.outlineDiv)
   }
 
-  onDragCancel = () => {
-    const rootdiv = this.props.layoutRef.current!
+  onDragCancel = (wasDragging: boolean) => {
+    const rootdiv = ReactDOM.findDOMNode(this.props.layout) as Element
     rootdiv.removeChild(this.outlineDiv as Element)
   }
 
@@ -80,13 +52,12 @@ class Splitter extends React.Component<ISplitterProps, ISplitterState> {
   }
 
   onDragMove = (event: Event | React.MouseEvent<HTMLDivElement>) => {
-    const clientRect = this.props.layoutRef.current!.getBoundingClientRect()
+    const clientRect = (ReactDOM.findDOMNode(this.props.layout) as Element).getBoundingClientRect()
     const mouseEvent = event as React.MouseEvent<HTMLDivElement>
     const pos = {
       x: mouseEvent.clientX - clientRect.left,
       y: mouseEvent.clientY - clientRect.top,
     }
-
     const outlineDiv = this.outlineDiv as HTMLDivElement
 
     if (this.props.node.getOrientation() === Orientation.HORZ) {
@@ -107,12 +78,17 @@ class Splitter extends React.Component<ISplitterProps, ISplitterState> {
       value = outlineDiv.offsetLeft
     }
 
-    const splitSpec = parentNode.calculateSplit(this.props.node, value)
-    if (splitSpec !== undefined) {
-      this.props.layout.doAction(Actions.adjustSplit(splitSpec))
+    if (parentNode instanceof BorderNode) {
+      const pos = (parentNode as BorderNode).calculateSplit(node, value)
+      this.props.layout.doAction(Actions.adjustBorderSplit((node.getParent() as Node).getId(), pos))
+    } else {
+      const splitSpec = parentNode.calculateSplit(this.props.node, value)
+      if (splitSpec !== undefined) {
+        this.props.layout.doAction(Actions.adjustSplit(splitSpec))
+      }
     }
 
-    const rootdiv = this.props.layoutRef.current!
+    const rootdiv = ReactDOM.findDOMNode(this.props.layout) as Element
     rootdiv.removeChild(this.outlineDiv as HTMLDivElement)
   }
 
@@ -130,16 +106,20 @@ class Splitter extends React.Component<ISplitterProps, ISplitterState> {
   }
 
   render() {
+    // tslint:disable-next-line
+    console.log('Rerender spliiter!')
+    const cm = this.props.layout.getClassName
     const node = this.props.node
-    const isHorizontal = this.props.node.getOrientation() === Orientation.HORZ
-    const style = node.styleWithPosition()
+    const style = node.styleWithPosition({
+      cursor: this.props.node.getOrientation() === Orientation.HORZ ? 'ns-resize' : 'ew-resize',
+    })
 
     return (
-      <StaticSplitter
+      <div
         style={style}
-        isHorizontal={isHorizontal}
         onTouchStart={this.onMouseDown}
         onMouseDown={this.onMouseDown}
+        className={cm('flexlayout__splitter')}
       />
     )
   }

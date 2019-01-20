@@ -1,11 +1,13 @@
-// tslint:disable:no-any no-string-literal
-import AttributeDefinitions from 'components/flex-layout/AttributeDefinitions'
-import Orientation from 'components/flex-layout/Orientation'
-import Node from 'components/flex-layout/model/Node'
-import Model from 'components/flex-layout/model/Model'
+// tslint:disable:no-any no-string-literal no-empty
+import AttributeDefinitions from 'src/components/flex-layout/lib/AttributeDefinitions'
+import Orientation from 'src/components/flex-layout/lib/Orientation'
+
+import Node from 'src/components/flex-layout/model/Node'
+import Model from 'src/components/flex-layout/model/Model'
 
 class SplitterNode extends Node {
   static readonly TYPE: string = 'splitter'
+
   /** @hidden @internal */
   constructor(model: Model) {
     super(model)
@@ -30,9 +32,7 @@ class SplitterNode extends Node {
   }
 
   /** @hidden @internal */
-  setWeight(value: number): void {
-    return
-  }
+  setWeight(value: number): void {}
 
   /** @hidden @internal */
   getPrefSize(orientation: Orientation): number {
@@ -40,9 +40,7 @@ class SplitterNode extends Node {
   }
 
   /** @hidden @internal */
-  updateAttrs(json: any): void {
-    return
-  }
+  updateAttrs(json: any): void {}
 
   /** @hidden @internal */
   getAttributeDefinitions(): AttributeDefinitions {

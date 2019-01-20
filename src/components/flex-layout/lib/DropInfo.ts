@@ -1,7 +1,7 @@
-import Rect from 'components/flex-layout/Rect'
-import Node from 'components/flex-layout/model/Node'
-import DockLocation from 'components/flex-layout/DockLocation'
-import IDropTarget from 'components/flex-layout/model/IDropTarget'
+import Rect from 'src/components/flex-layout/lib/Rect'
+import DockLocation from 'src/components/flex-layout/lib/DockLocation'
+import Node from 'src/components/flex-layout/model/Node'
+import IDropTarget from 'src/components/flex-layout/model/IDropTarget'
 
 class DropInfo {
   node: Node & IDropTarget

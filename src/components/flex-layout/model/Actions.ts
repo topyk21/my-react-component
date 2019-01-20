@@ -1,7 +1,6 @@
 // tslint:disable:no-any max-line-length
-import DockLocation from 'components/flex-layout/DockLocation'
-
-import Action from 'components/flex-layout/model/Action'
+import DockLocation from 'src/components/flex-layout/lib/DockLocation'
+import Action from 'src/components/flex-layout/model/Action'
 
 /**
  * The Action creator class for FlexLayout model actions
@@ -14,6 +13,7 @@ class Actions {
   static SELECT_TAB = 'FlexLayout_SelectTab'
   static SET_ACTIVE_TABSET = 'FlexLayout_SetActiveTabset'
   static ADJUST_SPLIT = 'FlexLayout_AdjustSplit'
+  static ADJUST_BORDER_SPLIT = 'FlexLayout_AdjustBorderSplit'
   static MAXIMIZE_TOGGLE = 'FlexLayout_MaximizeToggle'
   static UPDATE_MODEL_ATTRIBUTES = 'FlexLayout_UpdateModelAttributes'
   static UPDATE_NODE_ATTRIBUTES = 'FlexLayout_UpdateNodeAttributes'
@@ -117,10 +117,14 @@ class Actions {
       node1,
       node2,
       weight1: splitSpec.weight1,
-      pixelWidth1: splitSpec.pixelWidth1,
       weight2: splitSpec.weight2,
+      pixelWidth1: splitSpec.pixelWidth1,
       pixelWidth2: splitSpec.pixelWidth2,
     })
+  }
+
+  static adjustBorderSplit(nodeId: string, pos: number): Action {
+    return new Action(Actions.ADJUST_BORDER_SPLIT, { pos, node: nodeId })
   }
 
   /**
