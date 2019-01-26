@@ -6,7 +6,7 @@ export interface IUser {
   id: string
   name: string
 }
-export interface IReduxState {
+export interface IAuthReduxState {
   pending: boolean
   isSignIn: boolean
   user?: IUser
@@ -14,7 +14,7 @@ export interface IReduxState {
 /*
   Initial State
 */
-const initialState: IReduxState = {
+const initialState: IAuthReduxState = {
   pending: false,
   isSignIn: false,
 }
@@ -39,7 +39,7 @@ export const actionCreators = {
   Reducer
  */
 // tslint:disable-next-line
-export default handleActions<IReduxState, any>(
+export default handleActions<IAuthReduxState, any>(
   {
     [ActionTypes.SIGN_IN]: state => ({
       ...state,

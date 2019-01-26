@@ -1,12 +1,11 @@
 import * as React from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
-import { hot } from 'react-hot-loader'
+import { hot } from 'react-hot-loader/root'
 import { Switch, Route } from 'react-router-dom'
 import { ConnectedRouter } from 'connected-react-router'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import blue from '@material-ui/core/colors/blue'
 // Custom library
 import setStoreConfig from 'src/lib/redux/redux-store'
 import PrivateRoute from 'src/lib/react-router/private-route'
@@ -18,8 +17,11 @@ import Page from 'src/pages/Page'
 
 /** Material-ui theme setting */
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
-    primary: blue,
+    type: 'dark',
   },
 })
 /** Get Redux Store */
@@ -55,4 +57,4 @@ const App = () => (
   </AppWrapper>
 )
 
-export default hot(module)(App)
+export default hot(App)

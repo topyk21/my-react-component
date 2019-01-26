@@ -1,24 +1,24 @@
-const autoprefixer = require('autoprefixer');
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const autoprefixer = require('autoprefixer')
+const path = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 // const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const getClientEnvironment = require('./env');
-const paths = require('./paths');
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const getClientEnvironment = require('./env')
+const paths = require('./paths')
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
-const publicPath = '/';
+const publicPath = '/'
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
-const publicUrl = '';
+const publicUrl = ''
 // Get environment variables to inject into our app.
-const env = getClientEnvironment(publicUrl);
+const env = getClientEnvironment(publicUrl)
 
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
@@ -49,7 +49,7 @@ module.exports = {
     // This is the URL that app is served from. We use "/" in development.
     publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: (info) =>
+    devtoolModuleFilenameTemplate: info =>
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
   resolve: {
@@ -58,8 +58,8 @@ module.exports = {
     // if there are any conflicts. This matches Node resolution mechanism.
     // https://github.com/facebookincubator/create-react-app/issues/253
     modules: ['node_modules', paths.appNodeModules, paths.appSrc]
-    // It is guaranteed to exist because we tweak it in `env.js`
-    .concat(process.env.NODE_PATH.split(path.delimiter).filter(Boolean)),
+      // It is guaranteed to exist because we tweak it in `env.js`
+      .concat(process.env.NODE_PATH.split(path.delimiter).filter(Boolean)),
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
     // some tools, although we do not recommend using it, see:
@@ -146,38 +146,54 @@ module.exports = {
             },
           },
           // Process JS with Babel.
-          {
-            test: /\.(js|jsx|mjs)$/,
-            include: paths.appSrc,
-            loader: require.resolve('babel-loader'),
-            options: {
-              // This is a feature of `babel-loader` for webpack (not Babel itself).
-              // It enables caching results in ./node_modules/.cache/babel-loader/
-              // directory for faster rebuilds.
-              cacheDirectory: true,
-              compact: true,
-              plugins: [
-                'react-hot-loader/babel',
-              ],
-            },
-          },
+          // {
+          //     test: /\.(js|jsx|mjs)$/,
+          //     include: paths.appSrc,
+          //     loader: require.resolve('babel-loader'),
+          //     options: {
+          //         // This is a feature of `babel-loader` for webpack (not Babel itself).
+          //         // It enables caching results in ./node_modules/.cache/babel-loader/
+          //         // directory for faster rebuilds.
+          //         cacheDirectory: true,
+          //         compact: true,
+          //         plugins: ['react-hot-loader/babel'],
+          //     },
+          // },
           // Compile .tsx?
           {
             test: /\.tsx?$/,
             include: paths.appSrc,
+            exclude: /node_modules/,
             use: [
               {
-                loader: 'babel-loader',
+                loader: require.resolve('babel-loader'),
                 options: {
+                  // This is a feature of `babel-loader` for webpack (not Babel itself).
+                  // It enables caching results in ./node_modules/.cache/babel-loader/
+                  // directory for faster rebuilds.
+                  cacheDirectory: true,
                   babelrc: false,
-                  plugins: ['react-hot-loader/babel'],
+                  presets: [
+                    [
+                      '@babel/preset-env',
+                      { targets: { browsers: 'last 2 versions' } }, // or whatever your project requires
+                    ],
+                    '@babel/preset-typescript',
+                    '@babel/preset-react',
+                  ],
+                  plugins: [
+                    // plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
+                    ['@babel/plugin-proposal-decorators', { legacy: true }],
+                    ['@babel/plugin-proposal-class-properties', { loose: true }],
+                    'react-hot-loader/babel',
+                  ],
                 },
               },
               {
                 loader: require.resolve('ts-loader'),
                 options: {
                   transpileOnly: true,
-                }
+                },
               },
             ],
           },
@@ -187,7 +203,7 @@ module.exports = {
           // In production, we use a plugin to extract that CSS to a file, but
           // in development "style" loader enables hot editing of CSS.
           {
-            test: /\.css$/,
+            test: /\.(css|scss)$/,
             use: [
               require.resolve('style-loader'),
               {
@@ -214,6 +230,13 @@ module.exports = {
                       flexbox: 'no-2009',
                     }),
                   ],
+                  sourceMap: true,
+                },
+              },
+              {
+                loader: require.resolve('sass-loader'),
+                options: {
+                  sourceMap: true,
                 },
               },
             ],
@@ -228,7 +251,7 @@ module.exports = {
             // its runtime that would otherwise processed through "file" loader.
             // Also exclude `html` and `json` extensions so they get processed
             // by webpacks internal loaders.
-            exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
+            exclude: [/\.(ts|tsx|js|jsx|mjs)$/, /\.html$/, /\.json$/, /\.scss$/],
             loader: require.resolve('file-loader'),
             options: {
               name: 'static/media/[name].[hash:8].[ext]',
@@ -290,4 +313,4 @@ module.exports = {
   performance: {
     hints: false,
   },
-};
+}

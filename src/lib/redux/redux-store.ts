@@ -1,21 +1,24 @@
 import { applyMiddleware, createStore } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import createSagaMiddleware from 'redux-saga'
-import { connectRouter, routerMiddleware } from 'connected-react-router'
+import { routerMiddleware } from 'connected-react-router'
+import { createBrowserHistory } from 'history'
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly'
 
-import rootReducer, { persistConfig } from 'src/lib/redux/redux-reducer'
-import RouteHistory from 'src/lib/react-router/route-history'
+import createRootReducer, { persistConfig } from 'src/lib/redux/redux-reducer'
 
-/** Async ajax 지원을 위한 open source로 redux-saga 채택  */
+/** Redux의 async ajax 지원을 위한 open source로 redux-saga 채택  */
 const saga = createSagaMiddleware()
+/** Create browser history for react-router */
+export const routeHistory = createBrowserHistory()
 /**
  * 아래 코드로 인해 Redux store가 생성되며,
  * react-router, redux-devttol, redux-saga 등의 middleware들을 적용해 준 상태입니다.
  */
 const store = createStore(
-  connectRouter(RouteHistory)(rootReducer) /* preload state */,
-  composeWithDevTools(applyMiddleware(saga, routerMiddleware(RouteHistory)))
+  createRootReducer(routeHistory),
+  // connectRouter(routeHistory)(createRootReducer) /* preload state */,
+  composeWithDevTools(applyMiddleware(saga, routerMiddleware(routeHistory)))
 )
 const persistor = persistStore(store)
 
@@ -23,7 +26,7 @@ export default () => {
   if (module.hot) {
     module.hot.accept(() => {
       const nextRootReducer = require('./redux-reducer')
-      store.replaceReducer(persistReducer(persistConfig, nextRootReducer))
+      store.replaceReducer(persistReducer(persistConfig, nextRootReducer(routeHistory)))
     })
   }
   return { store, persistor }

@@ -3,11 +3,11 @@ import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { replace } from 'connected-react-router'
 import { Redirect } from 'react-router-dom'
-import axios from 'axios'
 
 import { IReduxState } from 'src/lib/redux/redux-reducer'
 import SignForm from 'src/components/auth/SignForm'
 import { IUser, actionCreators as authActions } from 'src/components/auth/Widgets'
+import { getUserInfo } from 'src/components/auth/Utlis'
 
 interface IStateProps {
   pending: boolean
@@ -17,7 +17,9 @@ interface IStateProps {
 interface IDispatchProps {
   onSignIn: (id: string, password: string) => void
 }
-interface IContProps extends IStateProps, IDispatchProps {}
+// tslint:disable-next-line
+interface IOwnProps {}
+interface IContProps extends IStateProps, IDispatchProps, IOwnProps {}
 interface IContState {
   id: string
   password: string
@@ -32,11 +34,6 @@ const mapStateToProps = (state: IReduxState) => ({
  * axios로 실제 ajax request를 날리는 부분을 구현했으나,
  * redux-saga도록 사용하게 바꾸어야 합니다.
  */
-
-const getUserInfo = (id: string) => {
-  return axios.get(`https://jsonplaceholder.typicode.com/users/${id}`)
-}
-
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({
   onSignIn: (id, password) => {
     if (id.trim() === '') {
@@ -93,7 +90,7 @@ class Container extends React.Component<IContProps, IContState> {
   }
 }
 
-export default connect<IStateProps, IDispatchProps, void>(
+export default connect<IStateProps, IDispatchProps, IOwnProps>(
   mapStateToProps,
   mapDispatchToProps
 )(Container)

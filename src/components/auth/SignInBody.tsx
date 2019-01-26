@@ -1,54 +1,42 @@
 import * as React from 'react'
-import styled from 'styled-components'
 
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 interface ISignInBodyProps {
+  pending: boolean
   onSignIn: (e: React.MouseEvent<HTMLElement>) => void
   onChangeId: (e: React.ChangeEvent<HTMLInputElement>) => void
   onChangePassword: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-const InputsWrapper = styled.div`
-  padding: 8px 20px 20px;
-`
-const ButtonsWrapper = styled.div`
-  padding: 8px 20px 20px;
-  margin-top: 10px;
-  & > button {
-    margin-top: 10px;
-    width: 100%;
-    border-radius: 20px;
-  }
-`
 
 const SignInBody: React.SFC<ISignInBodyProps> = props => (
   <React.Fragment>
-    <InputsWrapper>
+    <div className={'sign-in__input-wrapper'}>
       <TextField
         autoComplete="off"
-        fullWidth={true}
-        autoFocus={true}
+        fullWidth
+        autoFocus
         name="id"
         label="ID"
         onChange={props.onChangeId}
       />
       <TextField
-        fullWidth={true}
+        fullWidth
         type="password"
         name="password"
         label="Password"
         onChange={props.onChangePassword}
       />
-    </InputsWrapper>
-    <ButtonsWrapper>
-      <Button variant="raised" color="primary" onClick={props.onSignIn}>
+    </div>
+    <div className={'sign-in__button-wrapper'}>
+      <Button variant="contained" color="primary" onClick={props.onSignIn} disabled={props.pending}>
         SIGN IN
       </Button>
-      <Button variant="raised" color="secondary">
+      <Button variant="contained" color="secondary" disabled={props.pending}>
         SIGN UP
       </Button>
-    </ButtonsWrapper>
+    </div>
   </React.Fragment>
 )
 

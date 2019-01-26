@@ -1,5 +1,4 @@
 import * as React from 'react'
-import styled from 'styled-components'
 import { Layout as FlexLayout, Model } from 'src/components/flex-layout'
 
 import 'src/components/flex-layout/static/light.css'
@@ -9,10 +8,7 @@ interface IMainLayoutProps {}
 interface IMainLayoutState {
   model: Model
 }
-const ItemWrapper = styled.div`
-  margin: 15px;
-  box-sizing: border-box;
-`
+
 const initialModel = {
   global: { tabEnableClose: true },
   borders: [
@@ -24,6 +20,16 @@ const initialModel = {
     {
       type: 'border',
       location: 'right',
+      children: [],
+    },
+    {
+      type: 'border',
+      location: 'left',
+      children: [],
+    },
+    {
+      type: 'border',
+      location: 'top',
       children: [],
     },
   ],
@@ -77,9 +83,9 @@ class MainLayout extends React.Component<IMainLayoutProps, IMainLayoutState> {
 
   factory = () => {
     return (
-      <ItemWrapper>
+      <div>
         <button>Wow!</button>
-      </ItemWrapper>
+      </div>
     )
   }
 
