@@ -70,16 +70,20 @@ class DockLocation {
       case DockLocation.TOP:
         r1 = new Rect(rect.x, rect.y, rect.width, size)
         r2 = new Rect(rect.x, rect.y + size, rect.width, rect.height - size)
+        break
       case DockLocation.BOTTOM:
         r1 = new Rect(rect.x, rect.getBottom() - size, rect.width, size)
         r2 = new Rect(rect.x, rect.y, rect.width, rect.height - size)
+        break
       case DockLocation.LEFT:
         r1 = new Rect(rect.x, rect.y, size, rect.height)
         r2 = new Rect(rect.x + size, rect.y, rect.width - size, rect.height)
+        break
       default:
         // case DockLocation.RIGHT:
         r1 = new Rect(rect.getRight() - size, rect.y, size, rect.height)
         r2 = new Rect(rect.x, rect.y, rect.width - size, rect.height)
+        break
     }
     return { start: r1, end: r2 }
   }
