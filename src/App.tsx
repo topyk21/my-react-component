@@ -38,7 +38,7 @@ const AppWrapper: React.SFC<{}> = props => (
 )
 /**
  * Routing Entry variable
- * Oms의 컨셉은 React Router를 활용한 표시 데이터의 변경이 아닌,
+ * 해당 Library 컨셉은 React Router를 활용한 표시 데이터의 변경이 아닌,
  * React Loadable을 활용하여 Component를 Dynamic Load 해오기에
  * Router 부분의 Code가 짧습니다.
  */
