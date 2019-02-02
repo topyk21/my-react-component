@@ -1,4 +1,7 @@
 /**
+ * File uploader component
+ * Made by Hong Young Gi, topyk21@gmail.com
+ *
  *  TODO:
  *  1. IE 고려 해야 할지?
  *  else if (event.dataTransfer.types && event.dataTransfer.types[0] === 'Files') {
@@ -18,10 +21,15 @@ import FileUploader from 'src/components/file-uploader/view/FileUploader'
 import FileSource from 'src/components/file-uploader/FileSource'
 
 interface IContProps {
+  /** File upload host address */
   api: string
+  /** Multi file upload option */
   multiple?: boolean
+  /** File upload filter option. Please see html input='file' spec */
   accept?: string
+  /** If this flag is on, file will be auto uploaded after mouting */
   mountingUpload?: boolean
+  /** File extension limitation. File extension will be checked in constructor */
   allowedExtension: string[]
 }
 interface IContState {

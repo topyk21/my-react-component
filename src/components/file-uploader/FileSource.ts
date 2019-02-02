@@ -1,7 +1,9 @@
 // tslint:disable
 /**
  * File 관리 Class
- * TODO: Chunking upload, Image Size check
+ * Made by Hong Young Gi, topyk21@gmail.com
+ *
+ * TODO: Chunking upload
  *
  * @class FileManager
  * @extends {File}
