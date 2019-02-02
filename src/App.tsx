@@ -13,16 +13,14 @@ import RouteHistory from 'src/lib/react-router/route-history'
 // Container components
 import SignForm from 'src/components/auth/Container'
 // Page components
-import Page from 'src/pages/Page'
+// Static
+import 'typeface-roboto'
+import 'src/scroll.scss'
 
 /** Material-ui theme setting */
-const theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
-  palette: {
-    type: 'dark',
-  },
+const defaultTheme = createMuiTheme({
+  typography: { useNextVariants: true },
+  palette: { type: 'dark' },
 })
 /** Get Redux Store */
 const mainStore = setStoreConfig()
