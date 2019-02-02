@@ -18,6 +18,8 @@ $toggle-disabled-tab-bg: #dddddd;
   cursor: pointer;
   user-select: none;
   margin: 0 0 5px 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
 
   &.tbx__wrapper-full-width {
     width: 100%;

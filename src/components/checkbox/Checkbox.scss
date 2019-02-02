@@ -9,6 +9,8 @@ $cbx-enabled-color: #506eec;
   display: inline-block;
   vertical-align: middle;
   user-select: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
 
   &.cbx__wrapper-full-width {
     width: 100%;
