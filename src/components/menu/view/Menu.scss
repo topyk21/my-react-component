@@ -1,0 +1,13 @@
+.menu-item {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  &.menu-parent-item span {
+    font-weight: 600 !important;
+  }
+
+  &.menu-child-item {
+    padding: 6px 0px 6px 32px;
+  }
+}
