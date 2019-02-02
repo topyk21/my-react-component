@@ -8,7 +8,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 // Custom library
 import setStoreConfig, { routeHistory } from 'src/lib/redux/redux-store'
-import PrivateRoute from 'src/lib/react-router/private-route'
+import PrivateRoute from 'src/lib/private-route'
 // Container components
 import SignForm from 'src/components/auth/Container'
 // Page components
