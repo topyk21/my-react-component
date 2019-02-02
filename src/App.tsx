@@ -7,12 +7,12 @@ import { ConnectedRouter } from 'connected-react-router'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 // Custom library
-import setStoreConfig from 'src/lib/redux/redux-store'
+import setStoreConfig, { routeHistory } from 'src/lib/redux/redux-store'
 import PrivateRoute from 'src/lib/react-router/private-route'
-import RouteHistory from 'src/lib/react-router/route-history'
 // Container components
 import SignForm from 'src/components/auth/Container'
 // Page components
+import RootPage from 'src/pages/RootPage'
 // Static
 import 'typeface-roboto'
 import 'src/scroll.scss'
@@ -28,9 +28,9 @@ const mainStore = setStoreConfig()
 const AppWrapper: React.SFC<{}> = props => (
   <Provider store={mainStore.store}>
     <PersistGate loading={null} persistor={mainStore.persistor}>
-      <MuiThemeProvider theme={theme}>
+      <MuiThemeProvider theme={defaultTheme}>
         <CssBaseline>
-          <ConnectedRouter history={RouteHistory}>{props.children}</ConnectedRouter>
+          <ConnectedRouter history={routeHistory}>{props.children}</ConnectedRouter>
         </CssBaseline>
       </MuiThemeProvider>
     </PersistGate>
@@ -45,7 +45,7 @@ const AppWrapper: React.SFC<{}> = props => (
 const AppEntry = ({}) => (
   <Switch>
     <Route path="/signin" component={SignForm} />
-    <PrivateRoute isAuth={mainStore.store.getState().auth.isSignIn} path="/" component={Page} />
+    <PrivateRoute path="/" isAuth={mainStore.store.getState().auth.isSignIn} component={RootPage} />
   </Switch>
 )
 /** App 진입점 */
