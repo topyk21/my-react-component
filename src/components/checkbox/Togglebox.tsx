@@ -1,17 +1,29 @@
+/**
+ * Togglebox component
+ * Made by Hong Young Gi, topyk21@gmail.com
+ */
 import * as React from 'react'
 import classNames from 'classnames'
 
 import 'src/components/checkbox/Togglebox.scss'
 
 interface IToggleboxProps {
+  /** Checkbox id */
   id: string
+  /** Checkbox label */
   label: string
+  /** Checkbox value */
   value?: string
+  /** Checkbox checked flag */
   checked?: boolean
+  /** Checkbox checked status change event */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   className?: string
+  /** Checkbox wrapper class Name */
   style?: React.CSSProperties
+  /** Checkbox width flag. If this flag is on, component width is same with wrapper element */
   fullWidth?: boolean
+  /** Checkbox disabled flag */
   disabled?: boolean
 }
 
