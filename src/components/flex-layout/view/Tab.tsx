@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import { JSMap } from 'src/components/flex-layout/lib/Types'
 import TabSetNode from 'src/components/flex-layout/model/TabSetNode'
 import TabNode from 'src/components/flex-layout/model/TabNode'
@@ -50,7 +51,6 @@ class Tab extends React.Component<ITabProps, ITabState> {
   }
 
   render() {
-    const cm = this.props.layout.getClassName
     const node = this.props.node
     const parentNode = node.getParent() as TabSetNode
     // tslint:disable-next-line:no-any
@@ -69,7 +69,7 @@ class Tab extends React.Component<ITabProps, ITabState> {
 
     return (
       <div
-        className={cm('flexlayout__tab')}
+        className="flexlayout__tab"
         onMouseDown={this.onMouseDown}
         onTouchStart={this.onMouseDown}
         style={style}

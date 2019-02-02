@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+
 import DragDrop from 'src/components/flex-layout/lib/DragDrop'
 import Orientation from 'src/components/flex-layout/lib/Orientation'
 import Node from 'src/components/flex-layout/model/Node'
@@ -35,7 +36,7 @@ class Splitter extends React.Component<ISplitterProps, {}> {
     const rootdiv = ReactDOM.findDOMNode(this.props.layout) as Element
     this.outlineDiv = document.createElement('div')
     this.outlineDiv.style.position = 'absolute'
-    this.outlineDiv.className = this.props.layout.getClassName('flexlayout__splitter_drag')
+    this.outlineDiv.className = 'flexlayout__splitter_drag'
     this.outlineDiv.style.cursor =
       this.props.node.getOrientation() === Orientation.HORZ ? 'ns-resize' : 'ew-resize'
     this.props.node.getRect().positionElement(this.outlineDiv)
@@ -106,9 +107,6 @@ class Splitter extends React.Component<ISplitterProps, {}> {
   }
 
   render() {
-    // tslint:disable-next-line
-    console.log('Rerender spliiter!')
-    const cm = this.props.layout.getClassName
     const node = this.props.node
     const style = node.styleWithPosition({
       cursor: this.props.node.getOrientation() === Orientation.HORZ ? 'ns-resize' : 'ew-resize',
@@ -119,7 +117,7 @@ class Splitter extends React.Component<ISplitterProps, {}> {
         style={style}
         onTouchStart={this.onMouseDown}
         onMouseDown={this.onMouseDown}
-        className={cm('flexlayout__splitter')}
+        className="flexlayout__splitter"
       />
     )
   }

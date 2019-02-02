@@ -1,6 +1,8 @@
 // tslint:disable:prefer-template
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import classNames from 'classnames'
+
 import Rect from 'src/components/flex-layout/lib/Rect'
 import Actions from 'src/components/flex-layout/model/Actions'
 import TabNode from 'src/components/flex-layout/model/TabNode'
@@ -70,21 +72,15 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
   }
 
   render() {
-    const cm = this.props.layout.getClassName
-    let classNames =
-      cm('flexlayout__border_button') + ' ' + cm('flexlayout__border_button_' + this.props.border)
+    const borderButtonClass = classNames(
+      'flexlayout__border_button',
+      'flexlayout__border_button_' + this.props.border,
+      {
+        'flexlayout__border_button--selected': this.props.selected,
+        'flexlayout__border_button--unselected': !this.props.selected,
+      }
+    )
     const node = this.props.node
-
-    if (this.props.selected) {
-      classNames += ' ' + cm('flexlayout__border_button--selected')
-    } else {
-      classNames += ' ' + cm('flexlayout__border_button--unselected')
-    }
-
-    if (this.props.node.getClassName() !== undefined) {
-      classNames += ' ' + this.props.node.getClassName()
-    }
-
     let leadingContent
 
     if (node.getIcon() !== undefined) {
@@ -94,7 +90,7 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
     const content = (
       <div
         ref={ref => (this.contentsRef = ref === null ? undefined : ref)}
-        className={cm('flexlayout__border_button_content')}
+        className="flexlayout__border_button_content"
       >
         {node.getName()}
       </div>
@@ -104,7 +100,7 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
     if (this.props.node.isEnableClose()) {
       closeButton = (
         <div
-          className={cm('flexlayout__border_button_trailing')}
+          className="flexlayout__border_button_trailing"
           onMouseDown={this.onCloseMouseDown}
           onClick={this.onClose}
           onTouchStart={this.onCloseMouseDown}
@@ -116,7 +112,7 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
       <div
         ref={ref => (this.selfRef = ref === null ? undefined : ref)}
         style={{}}
-        className={classNames}
+        className={borderButtonClass}
         onMouseDown={this.onMouseDown}
         onTouchStart={this.onMouseDown}
       >

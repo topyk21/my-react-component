@@ -7,7 +7,6 @@ interface IPopupMenuProps {
   items: IPoupMenuItem[]
   onHide: () => void
   onSelect: (item: { index: number; name: string }) => void
-  classNameMapper: (defaultClassName: string) => string
 }
 /** @hidden @internal */
 interface IPoupMenuItem {
@@ -20,14 +19,13 @@ class PopupMenu extends React.Component<IPopupMenuProps, {}> {
   static show = (
     triggerElement: Element,
     items: IPoupMenuItem[],
-    onSelect: (item: { index: number; name: string }) => void,
-    classNameMapper: (defaultClassName: string) => string
+    onSelect: (item: { index: number; name: string }) => void
   ) => {
     const triggerRect = triggerElement.getBoundingClientRect()
     const docRect = document.body.getBoundingClientRect()
 
     const elm = document.createElement('div')
-    elm.className = classNameMapper('flexlayout__popup_menu_container')
+    elm.className = 'flexlayout__popup_menu_container'
     elm.style.right = docRect.right - triggerRect.right + 'px'
     elm.style.top = triggerRect.bottom + 'px'
     document.body.appendChild(elm)
@@ -38,13 +36,7 @@ class PopupMenu extends React.Component<IPopupMenuProps, {}> {
     }
 
     ReactDOM.render(
-      <PopupMenu
-        element={elm}
-        onSelect={onSelect}
-        onHide={onHide}
-        items={items}
-        classNameMapper={classNameMapper}
-      />,
+      <PopupMenu element={elm} onSelect={onSelect} onHide={onHide} items={items} />,
       elm
     )
   }
@@ -84,14 +76,14 @@ class PopupMenu extends React.Component<IPopupMenuProps, {}> {
     const items = this.props.items.map(item => (
       <div
         key={item.index}
-        className={this.props.classNameMapper('flexlayout__popup_menu_item')}
+        className="flexlayout__popup_menu_item"
         onClick={this.onItemClick.bind(this, item)}
       >
         {item.name}
       </div>
     ))
 
-    return <div className={this.props.classNameMapper('flexlayout__popup_menu')}>{items}</div>
+    return <div className="flexlayout__popup_menu">{items}</div>
   }
 }
 

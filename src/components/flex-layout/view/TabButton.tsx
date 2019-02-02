@@ -1,5 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import classNames from 'classnames'
+
 import Rect from 'src/components/flex-layout/lib/Rect'
 import Actions from 'src/components/flex-layout/model/Actions'
 import TabNode from 'src/components/flex-layout/model/TabNode'
@@ -29,7 +31,7 @@ interface ICloseButtonProps {
 /** @hidden @internal */
 const CloseButton: React.SFC<ICloseButtonProps> = props => (
   <div
-    className={'flexlayout__tab_button_trailing'}
+    className="flexlayout__tab_button_trailing"
     onMouseDown={props.onMouseDown}
     onTouchStart={props.onMouseDown}
     onClick={props.onClick}
@@ -154,20 +156,7 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
   }
 
   render() {
-    const cm = this.props.layout.getClassName
-    let classNames = cm('flexlayout__tab_button')
     const node = this.props.node
-
-    if (this.props.selected) {
-      classNames += ' ' + cm('flexlayout__tab_button--selected')
-    } else {
-      classNames += ' ' + cm('flexlayout__tab_button--unselected')
-    }
-
-    if (this.props.node.getClassName() !== undefined) {
-      classNames += ' ' + this.props.node.getClassName()
-    }
-
     let leadingContent
 
     if (node.getIcon() !== undefined) {
@@ -178,12 +167,10 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
     const renderState = { leading: leadingContent, content: node.getName() }
     this.props.layout.customizeTab(node, renderState)
 
-    const leading = (
-      <div className={cm('flexlayout__tab_button_leading')}>{renderState.leading}</div>
-    )
+    const leading = <div className="flexlayout__tab_button_leading">{renderState.leading}</div>
 
     let content = (
-      <div ref={this.contentRef} className={cm('flexlayout__tab_button_content')}>
+      <div ref={this.contentRef} className="flexlayout__tab_button_content">
         {renderState.content}
       </div>
     )
@@ -194,7 +181,7 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
         <input
           style={contentStyle}
           ref={this.contentRef}
-          className={cm('flexlayout__tab_button_textbox')}
+          className="flexlayout__tab_button_textbox"
           type="text"
           autoFocus
           defaultValue={node.getName()}
@@ -210,6 +197,10 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
       closeButton = <CloseButton onClick={this.onClose} onMouseDown={this.onCloseMouseDown} />
     }
 
+    const buttonClass = classNames('flexlayout__tab_button', {
+      'flexlayout__tab_button--selected': this.props.selected,
+      'flexlayout__tab_button--unselected': !this.props.selected,
+    })
     return (
       <div
         ref={this.selfRef}
@@ -217,7 +208,7 @@ class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
           visibility: this.props.show ? 'visible' : 'hidden',
           height: this.props.height,
         }}
-        className={classNames}
+        className={buttonClass}
         onMouseDown={this.onMouseDown}
         onTouchStart={this.onMouseDown}
       >

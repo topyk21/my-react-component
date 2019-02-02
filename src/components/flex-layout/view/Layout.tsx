@@ -1,6 +1,8 @@
 // tslint:disable:no-any max-line-length
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import classNames from 'classnames'
+
 import { JSMap } from 'src/components/flex-layout/lib/Types'
 import DragDrop from 'src/components/flex-layout/lib/DragDrop'
 import Rect from 'src/components/flex-layout/lib/Rect'
@@ -21,8 +23,11 @@ import Tab from 'src/components/flex-layout/view/Tab'
 import TabSet from 'src/components/flex-layout/view/TabSet'
 import BorderTabSet from 'src/components/flex-layout/view/BorderTabSet'
 
+import 'src/components/flex-layout/static/flex-layout.scss'
+
 interface ILayoutProps {
   model: Model
+  theme: 'light' | 'dark'
   factory: (node: TabNode) => React.ReactNode
   onAction?: (action: Action) => void
   onRenderTab?: (
@@ -34,7 +39,6 @@ interface ILayoutProps {
     renderValues: { headerContent?: React.ReactNode; buttons: React.ReactNode[] }
   ) => void
   onModelChange?: (model: Model) => void
-  classNameMapper?: (defaultClassName: string) => string
 }
 
 /**
@@ -82,7 +86,7 @@ class Layout extends React.Component<ILayoutProps, any> {
   /** @hidden @internal */
   private edgeTopDiv?: HTMLDivElement
   /** @hidden @internal */
-  private fnNewNodeDropped?: (() => void)
+  private fnNewNodeDropped?: () => void
 
   constructor(props: ILayoutProps) {
     super(props)
@@ -90,7 +94,6 @@ class Layout extends React.Component<ILayoutProps, any> {
     this.rect = new Rect(0, 0, 0, 0)
     this.model.setChangeListener(this.onModelChange)
     this.updateRect = this.updateRect.bind(this)
-    this.getClassName = this.getClassName.bind(this)
     this.tabIds = []
   }
 
@@ -153,14 +156,6 @@ class Layout extends React.Component<ILayoutProps, any> {
     }
   }
 
-  /** @hidden @internal */
-  getClassName = (defaultClassName: string) => {
-    if (this.props.classNameMapper === undefined) {
-      return defaultClassName
-    }
-    return this.props.classNameMapper(defaultClassName)
-  }
-
   /**
    * Adds a new tab to the given tabset
    * @param tabsetId the id of the tabset where the new tab will be added
@@ -219,7 +214,7 @@ class Layout extends React.Component<ILayoutProps, any> {
 
     this.dragDivText = dragText
     this.dragDiv = document.createElement('div')
-    this.dragDiv.className = this.getClassName('flexlayout__drag_rect')
+    this.dragDiv.className = 'flexlayout__drag_rect'
     this.dragDiv.innerHTML = this.dragDivText
     this.dragDiv.addEventListener('mousedown', this.onDragDivMouseDown)
     this.dragDiv.addEventListener('touchstart', this.onDragDivMouseDown)
@@ -320,12 +315,12 @@ class Layout extends React.Component<ILayoutProps, any> {
     this.dropInfo = undefined
     const rootdiv = ReactDOM.findDOMNode(this) as HTMLElement
     this.outlineDiv = document.createElement('div')
-    this.outlineDiv.className = this.getClassName('flexlayout__outline_rect')
+    this.outlineDiv.className = 'flexlayout__outline_rect'
     rootdiv.appendChild(this.outlineDiv)
 
     if (this.dragDiv === undefined) {
       this.dragDiv = document.createElement('div')
-      this.dragDiv.className = this.getClassName('flexlayout__drag_rect')
+      this.dragDiv.className = 'flexlayout__drag_rect'
       this.dragDiv.innerHTML = this.dragDivText
       rootdiv.appendChild(this.dragDiv)
     }
@@ -364,7 +359,7 @@ class Layout extends React.Component<ILayoutProps, any> {
     const dropInfo = this.model!.findDropTargetNode(this.dragNode!, pos.x, pos.y)
     if (dropInfo) {
       this.dropInfo = dropInfo
-      this.outlineDiv!.className = this.getClassName(dropInfo.className)
+      this.outlineDiv!.className = dropInfo.className
       dropInfo.rect.positionElement(this.outlineDiv!)
     }
   }
@@ -418,7 +413,7 @@ class Layout extends React.Component<ILayoutProps, any> {
       const width = '10px'
 
       this.edgeTopDiv = document.createElement('div')
-      this.edgeTopDiv.className = this.getClassName('flexlayout__edge_rect')
+      this.edgeTopDiv.className = 'flexlayout__edge_rect'
       this.edgeTopDiv.style.top = r.y + 'px'
       this.edgeTopDiv.style.left = r.x + (r.width - size) / 2 + 'px'
       this.edgeTopDiv.style.width = length
@@ -427,7 +422,7 @@ class Layout extends React.Component<ILayoutProps, any> {
       this.edgeTopDiv.style.borderBottomRightRadius = radius
 
       this.edgeLeftDiv = document.createElement('div')
-      this.edgeLeftDiv.className = this.getClassName('flexlayout__edge_rect')
+      this.edgeLeftDiv.className = 'flexlayout__edge_rect'
       this.edgeLeftDiv.style.top = r.y + (r.height - size) / 2 + 'px'
       this.edgeLeftDiv.style.left = r.x + 'px'
       this.edgeLeftDiv.style.width = width
@@ -436,7 +431,7 @@ class Layout extends React.Component<ILayoutProps, any> {
       this.edgeLeftDiv.style.borderBottomRightRadius = radius
 
       this.edgeBottomDiv = document.createElement('div')
-      this.edgeBottomDiv.className = this.getClassName('flexlayout__edge_rect')
+      this.edgeBottomDiv.className = 'flexlayout__edge_rect'
       this.edgeBottomDiv.style.bottom = domRect.height - r.getBottom() + 'px'
       this.edgeBottomDiv.style.left = r.x + (r.width - size) / 2 + 'px'
       this.edgeBottomDiv.style.width = length
@@ -445,7 +440,7 @@ class Layout extends React.Component<ILayoutProps, any> {
       this.edgeBottomDiv.style.borderTopRightRadius = radius
 
       this.edgeRightDiv = document.createElement('div')
-      this.edgeRightDiv.className = this.getClassName('flexlayout__edge_rect')
+      this.edgeRightDiv.className = 'flexlayout__edge_rect'
       this.edgeRightDiv.style.top = r.y + (r.height - size) / 2 + 'px'
       this.edgeRightDiv.style.right = domRect.width - r.getRight() + 'px'
       this.edgeRightDiv.style.width = width
@@ -613,12 +608,12 @@ class Layout extends React.Component<ILayoutProps, any> {
     })
 
     // this.layoutTime = (Date.now() - this.start);
-
+    const layoutClass = classNames('flexlayout__layout', {
+      flexlayout__light: this.props.theme === 'light',
+      flexlayout__dark: this.props.theme === 'dark',
+    })
     return (
-      <div
-        ref={self => (this.selfRef = self === null ? undefined : self)}
-        className={this.getClassName('flexlayout__layout')}
-      >
+      <div ref={self => (this.selfRef = self === null ? undefined : self)} className={layoutClass}>
         {tabSetComponents}
         {this.tabIds.map(t => {
           return tabComponents[t]

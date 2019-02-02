@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import DockLocation from 'src/components/flex-layout/lib/DockLocation'
 import Border from 'src/components/flex-layout/model/BorderNode'
 import TabNode from 'src/components/flex-layout/model/TabNode'
@@ -20,7 +21,6 @@ class BorderTabSet extends React.Component<IBorderTabSetProps, {}> {
   }
 
   render() {
-    const cm = this.props.layout.getClassName
     const border = this.props.border
     const style = border.getTabHeaderRect()!.styleWithPosition({})
     const tabs = []
@@ -53,12 +53,6 @@ class BorderTabSet extends React.Component<IBorderTabSetProps, {}> {
         )
       }
     }
-
-    let borderClasses = cm('flexlayout__border_' + border.getLocation().getName())
-    if (this.props.border.getClassName() !== undefined) {
-      borderClasses += ' ' + this.props.border.getClassName()
-    }
-
     // allow customization of tabset right/bottom buttons
     // tslint:disable-next-line:no-any
     let buttons: any[] = []
@@ -70,17 +64,15 @@ class BorderTabSet extends React.Component<IBorderTabSetProps, {}> {
       <div
         key="toolbar"
         ref={this.toolbarRef}
-        className={cm('flexlayout__border_toolbar_' + border.getLocation().getName())}
+        className={'flexlayout__border_toolbar_' + border.getLocation().getName()}
       >
         {buttons}
       </div>
     )
 
     return (
-      <div style={style} className={borderClasses}>
-        <div className={cm('flexlayout__border_inner_' + border.getLocation().getName())}>
-          {tabs}
-        </div>
+      <div style={style} className={'flexlayout__border_' + border.getLocation().getName()}>
+        <div className={'flexlayout__border_inner_' + border.getLocation().getName()}>{tabs}</div>
         {toolbar}
       </div>
     )

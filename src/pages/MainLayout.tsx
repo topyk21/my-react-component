@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Layout as FlexLayout, Model } from 'src/components/flex-layout'
 
-import 'src/components/flex-layout/static/light.css'
+import 'src/components/flex-layout/static/flex-layout.scss'
 
 // tslint:disable-next-line
 interface IMainLayoutProps {}
@@ -90,7 +90,7 @@ class MainLayout extends React.Component<IMainLayoutProps, IMainLayoutState> {
   }
 
   render() {
-    return <FlexLayout model={this.state.model} factory={this.factory} />
+    return <FlexLayout theme="dark" model={this.state.model} factory={this.factory} />
   }
 }
 
