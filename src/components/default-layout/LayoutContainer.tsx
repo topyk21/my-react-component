@@ -15,7 +15,7 @@ import { Layout as FlexLayout, Model, Actions } from 'src/components/flex-layout
 import { IMenuItem } from 'src/components/menu/types'
 import Layout from 'src/components/default-layout/Layout'
 import { menuData as menuTestData } from 'src/pages/test/data'
-import { parseNestedObjectToFlattern } from 'src/lib/data-parser'
+import { parseNestedObjectToFlattern } from 'src/lib/DataParser'
 
 interface IDispatchProps {
   signOut: (e: React.MouseEvent<HTMLElement>) => void

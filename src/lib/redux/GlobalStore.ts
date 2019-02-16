@@ -5,7 +5,7 @@ import { routerMiddleware } from 'connected-react-router'
 import { createBrowserHistory } from 'history'
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly'
 
-import createRootReducer, { persistConfig } from 'src/lib/redux/redux-reducer'
+import createRootReducer, { persistConfig } from 'src/lib/redux/GlobalReducer'
 
 /** Redux의 async ajax 지원을 위한 open source로 redux-saga 채택  */
 const saga = createSagaMiddleware()
@@ -25,7 +25,7 @@ const persistor = persistStore(store)
 export default () => {
   if (module.hot) {
     module.hot.accept(() => {
-      const nextRootReducer = require('./redux-reducer')
+      const nextRootReducer = require('./GlobalReducer')
       store.replaceReducer(persistReducer(persistConfig, nextRootReducer(routeHistory)))
     })
   }

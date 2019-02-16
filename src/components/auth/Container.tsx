@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { replace } from 'connected-react-router'
 import { Redirect } from 'react-router-dom'
 
-import { IReduxState } from 'src/lib/redux/redux-reducer'
+import { IReduxState } from 'src/lib/redux/GlobalReducer'
 import SignForm from 'src/components/auth/SignForm'
 import { IUser, actionCreators as authActions } from 'src/components/auth/Widgets'
 import { getUserInfo } from 'src/components/auth/Utlis'
