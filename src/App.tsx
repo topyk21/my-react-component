@@ -7,8 +7,8 @@ import { ConnectedRouter } from 'connected-react-router'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 // Custom library
-import setStoreConfig, { routeHistory } from 'src/lib/redux/GlobalStore'
-import PrivateRoute from 'src/lib/PrivateRoute'
+import setStoreConfig, { routeHistory } from 'src/common/GlobalStore'
+import PrivateRoute from 'src/common/PrivateRoute'
 // Container components
 import SignForm from 'src/components/auth/Container'
 // Page components
