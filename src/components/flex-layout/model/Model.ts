@@ -45,7 +45,7 @@ class Model {
     const attributeDefinitions = new AttributeDefinitions()
     // splitter
     attributeDefinitions
-      .add('splitterSize', 8)
+      .add('splitterSize', 4)
       .setType(Attribute.INT)
       .setFrom(1)
     attributeDefinitions.add('enableEdgeDock', true).setType(Attribute.BOOLEAN)
@@ -72,11 +72,11 @@ class Model {
     attributeDefinitions.add('tabSetClassNameHeader', undefined).setType(Attribute.STRING)
     attributeDefinitions.add('tabSetEnableTabStrip', true).setType(Attribute.BOOLEAN)
     attributeDefinitions
-      .add('tabSetHeaderHeight', 20)
+      .add('tabSetHeaderHeight', 24)
       .setType(Attribute.INT)
       .setFrom(0)
     attributeDefinitions
-      .add('tabSetTabStripHeight', 20)
+      .add('tabSetTabStripHeight', 24)
       .setType(Attribute.INT)
       .setFrom(0)
     attributeDefinitions
@@ -99,7 +99,7 @@ class Model {
   /** @hidden @internal */
   private nextId: number
   /** @hidden @internal */
-  private changeListener?: (() => void)
+  private changeListener?: () => void
   /** @hidden @internal */
   private root?: RowNode
   /** @hidden @internal */

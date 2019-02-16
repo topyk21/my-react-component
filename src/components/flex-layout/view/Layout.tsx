@@ -23,8 +23,6 @@ import Tab from 'src/components/flex-layout/view/Tab'
 import TabSet from 'src/components/flex-layout/view/TabSet'
 import BorderTabSet from 'src/components/flex-layout/view/BorderTabSet'
 
-import 'src/components/flex-layout/static/flex-layout.scss'
-
 interface ILayoutProps {
   model: Model
   theme: 'light' | 'dark'

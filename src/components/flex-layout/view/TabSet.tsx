@@ -1,4 +1,3 @@
-// tslint:disable:no-any
 import * as React from 'react'
 import classNames from 'classnames'
 
@@ -27,13 +26,12 @@ interface IHiddenTabItem {
 
 /** @hidden @internal */
 class TabSet extends React.Component<ITabSetProps, ITabSetState> {
-  headerRef?: HTMLDivElement
-  overflowbuttonRef: any
-  toolbarRef?: HTMLDivElement
-
   recalcVisibleTabs: boolean
   showOverflow: boolean
   showToolbar: boolean
+  private headerRef = React.createRef<HTMLDivElement>()
+  private toolbarRef = React.createRef<HTMLDivElement>()
+  private overflowbuttonRef = React.createRef<HTMLButtonElement>()
 
   constructor(props: ITabSetProps) {
     super(props)
@@ -62,7 +60,7 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
     const node = this.props.node
 
     if (node.isEnableTabStrip() && this.recalcVisibleTabs) {
-      const toolbarWidth = (this.toolbarRef as Element).getBoundingClientRect().width
+      const toolbarWidth = this.toolbarRef.current!.getBoundingClientRect().width
       let hideTabsAfter = 999
       for (let i = 0; i < node.getChildren().length; i += 1) {
         const child = node.getChildren()[i] as TabNode
@@ -198,7 +196,7 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
       toolbar = (
         <div
           key="toolbar"
-          ref={ref => (this.toolbarRef = ref === null ? undefined : ref)}
+          ref={this.toolbarRef}
           className="flexlayout__tab_toolbar"
           onMouseDown={this.onInterceptMouseDown}
         >
@@ -211,7 +209,7 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
       tabs.push(
         <button
           key="overflowbutton"
-          ref={ref => (this.overflowbuttonRef = ref === null ? undefined : ref)}
+          ref={this.overflowbuttonRef}
           className="flexlayout__tab_button_overflow"
           onClick={this.onOverflowClick.bind(this, hiddenTabs)}
           onMouseDown={this.onInterceptMouseDown}
@@ -253,10 +251,7 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
             top: node.getHeaderHeight() + 'px',
           }}
         >
-          <div
-            ref={ref => (this.headerRef = ref === null ? undefined : ref)}
-            className="flexlayout__tab_header_inner"
-          >
+          <div ref={this.headerRef} className="flexlayout__tab_header_inner">
             {tabs}
           </div>
         </div>
@@ -269,10 +264,7 @@ class TabSet extends React.Component<ITabSetProps, ITabSetState> {
           onMouseDown={this.onMouseDown}
           onTouchStart={this.onMouseDown}
         >
-          <div
-            ref={ref => (this.headerRef = ref === null ? undefined : ref)}
-            className="flexlayout__tab_header_inner"
-          >
+          <div ref={this.headerRef} className="flexlayout__tab_header_inner">
             {tabs}
           </div>
           {toolbar}

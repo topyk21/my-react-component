@@ -1,4 +1,3 @@
-// tslint:disable:prefer-template
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import classNames from 'classnames'
@@ -18,8 +17,8 @@ interface IBorderButtonProps {
 
 /** @hidden @internal */
 class BorderButton extends React.Component<IBorderButtonProps, {}> {
-  selfRef?: HTMLDivElement
-  contentsRef?: HTMLDivElement
+  private selfRef = React.createRef<HTMLDivElement>()
+  private contentsRef = React.createRef<HTMLDivElement>()
 
   constructor(props: IBorderButtonProps) {
     super(props)
@@ -65,7 +64,7 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
   updateRect = () => {
     // record position of tab in border
     const clientRect = (ReactDOM.findDOMNode(this.props.layout) as Element).getBoundingClientRect()
-    const r = (this.selfRef as Element).getBoundingClientRect()
+    const r = this.selfRef.current!.getBoundingClientRect()
     this.props.node.setTabRect(
       new Rect(r.left - clientRect.left, r.top - clientRect.top, r.width, r.height)
     )
@@ -88,10 +87,7 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
     }
 
     const content = (
-      <div
-        ref={ref => (this.contentsRef = ref === null ? undefined : ref)}
-        className="flexlayout__border_button_content"
-      >
+      <div ref={this.contentsRef} className="flexlayout__border_button_content">
         {node.getName()}
       </div>
     )
@@ -110,7 +106,7 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
 
     return (
       <div
-        ref={ref => (this.selfRef = ref === null ? undefined : ref)}
+        ref={this.selfRef}
         style={{}}
         className={borderButtonClass}
         onMouseDown={this.onMouseDown}
