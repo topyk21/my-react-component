@@ -13,9 +13,9 @@ import { Map } from 'immutable'
 import { actionCreators as authActions } from 'src/components/auth/Widgets'
 import { Layout as FlexLayout, Model, Actions } from 'src/components/flex-layout'
 import { IMenuItem } from 'src/components/menu/types'
-import Layout from 'src/components/default-layout/Layout'
-import { menuData as menuTestData } from 'src/pages/test/data'
 import { parseNestedObjectToFlattern } from 'src/common/DataParser'
+import { menuData as menuTestData } from 'src/pages/test/data'
+import Layout from 'src/pages/essentials/default-layout/Layout'
 
 interface IDispatchProps {
   signOut: (e: React.MouseEvent<HTMLElement>) => void
