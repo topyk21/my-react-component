@@ -41,8 +41,8 @@ const CloseButton: React.SFC<ICloseButtonProps> = props => (
 /** @hidden @internal */
 class TabButton extends React.Component<ITabButtonProps, ITabButtonState> {
   contentWidth: number = 0
-  selfRef = React.createRef<HTMLDivElement>()
-  contentRef = React.createRef<HTMLInputElement>()
+  private selfRef = React.createRef<HTMLDivElement>()
+  private contentRef = React.createRef<HTMLInputElement>()
 
   constructor(props: ITabButtonProps) {
     super(props)

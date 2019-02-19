@@ -5,8 +5,6 @@
 import * as React from 'react'
 import classNames from 'classnames'
 
-import 'src/components/checkbox/Togglebox.scss'
-
 interface IToggleboxProps {
   /** Checkbox id */
   id: string
@@ -18,6 +16,7 @@ interface IToggleboxProps {
   checked?: boolean
   /** Checkbox checked status change event */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  /** Checkbox classname of wrapper div */
   className?: string
   /** Checkbox wrapper class Name */
   style?: React.CSSProperties

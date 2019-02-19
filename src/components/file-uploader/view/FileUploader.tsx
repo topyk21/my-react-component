@@ -1,11 +1,9 @@
 import * as React from 'react'
 import classNames from 'classnames'
 
-import FileSource from 'src/components/file-uploader/FileSource'
 import FileItem from 'src/components/file-uploader/view/FileItemContainer'
 import FormLabel from 'src/components/file-uploader/view/FormLabel'
-
-import 'src/components/file-uploader/view/FileUploader.scss'
+import FileSource from 'src/components/file-uploader/FileSource'
 
 interface IFileUploaderProps {
   formId: string

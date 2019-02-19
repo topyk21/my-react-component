@@ -29,7 +29,7 @@ interface IContProps {
   accept?: string
   /** If this flag is on, file will be auto uploaded after mouting */
   mountingUpload?: boolean
-  /** File extension limitation. File extension will be checked in constructor */
+  /** File extension limitation. */
   allowedExtension: string[]
 }
 interface IContState {

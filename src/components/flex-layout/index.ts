@@ -17,6 +17,8 @@ import BorderNode from 'src/components/flex-layout/model/BorderNode'
 import BorderSet from 'src/components/flex-layout/model/BorderSet'
 import Layout from 'src/components/flex-layout/view/Layout'
 
+import 'src/components/flex-layout/static/flex-layout.scss'
+
 export {
   Layout,
   Actions,

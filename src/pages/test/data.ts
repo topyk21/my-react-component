@@ -2,7 +2,7 @@ import { IMenuData } from 'src/components/menu/types'
 export const menuData: IMenuData[] = [
   {
     id: '1',
-    label: 'TEST1',
+    label: 'Test1',
     parentId: '-1',
     subMenuItem: [
       {

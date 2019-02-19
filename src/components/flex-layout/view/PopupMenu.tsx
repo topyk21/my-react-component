@@ -17,11 +17,11 @@ interface IPoupMenuItem {
 /** @hidden @internal */
 class PopupMenu extends React.Component<IPopupMenuProps, {}> {
   static show = (
-    triggerElement: Element,
+    triggerElement: React.RefObject<HTMLButtonElement>,
     items: IPoupMenuItem[],
     onSelect: (item: { index: number; name: string }) => void
   ) => {
-    const triggerRect = triggerElement.getBoundingClientRect()
+    const triggerRect = triggerElement.current!.getBoundingClientRect()
     const docRect = document.body.getBoundingClientRect()
 
     const elm = document.createElement('div')

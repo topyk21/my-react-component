@@ -5,8 +5,6 @@
 import * as React from 'react'
 import classNames from 'classnames'
 
-import 'src/components/checkbox/Checkbox.scss'
-
 interface ICheckboxProps {
   /** Checkbox id */
   id: string
@@ -18,8 +16,9 @@ interface ICheckboxProps {
   checked?: boolean
   /** Checkbox checked status change event */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  className?: string
   /** Checkbox wrapper class Name */
+  className?: string
+  /** Checkbox additional style */
   style?: React.CSSProperties
   /** Checkbox width flag. If this flag is on, component width is same with wrapper element */
   fullWidth?: boolean

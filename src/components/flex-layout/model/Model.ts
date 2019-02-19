@@ -72,11 +72,11 @@ class Model {
     attributeDefinitions.add('tabSetClassNameHeader', undefined).setType(Attribute.STRING)
     attributeDefinitions.add('tabSetEnableTabStrip', true).setType(Attribute.BOOLEAN)
     attributeDefinitions
-      .add('tabSetHeaderHeight', 25)
+      .add('tabSetHeaderHeight', 24)
       .setType(Attribute.INT)
       .setFrom(0)
     attributeDefinitions
-      .add('tabSetTabStripHeight', 25)
+      .add('tabSetTabStripHeight', 24)
       .setType(Attribute.INT)
       .setFrom(0)
     attributeDefinitions

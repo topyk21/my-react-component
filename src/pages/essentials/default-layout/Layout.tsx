@@ -6,11 +6,11 @@ import { teal } from '@material-ui/core/colors'
 
 import { Layout as FlexLayout, Model } from 'src/components/flex-layout'
 import { IMenuItem } from 'src/components/menu/types'
-import Header from 'src/components/default-layout/Header'
-import Menu from 'src/components/default-layout/Menu'
-import Contents from 'src/components/default-layout/Contents'
+import Header from 'src/pages/essentials/default-layout/Header'
+import Menu from 'src/pages/essentials/default-layout/Menu'
+import Contents from 'src/pages/essentials/default-layout/Contents'
 
-import 'src/components/default-layout/Layout.scss'
+import 'src/pages/essentials/default-layout/Layout.scss'
 
 interface ILayoutProps {
   // theme props
