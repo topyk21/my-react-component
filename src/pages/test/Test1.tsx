@@ -1,8 +1,13 @@
 import * as React from 'react'
+import { Selector } from 'src/components/selector'
 
 class Test1 extends React.Component<{}, {}> {
   render() {
-    return <div>Hello! Test page!</div>
+    return (
+      <div>
+        <Selector data={[]} formLabel="test" /> Hello! Test page!
+      </div>
+    )
   }
 }
 
