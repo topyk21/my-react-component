@@ -5,6 +5,9 @@ import { connectRouter } from 'connected-react-router'
 import { History } from 'history'
 
 import auth, { IAuthReduxState } from 'src/components/auth/Widgets'
+import searchOptions, {
+  FluxSearchOptionReduxState,
+} from 'src/pages/essentials/search-options/Widgets'
 /**
  * [Intellisense의 Auto complete 지원을 위한 interface]
  *
@@ -14,15 +17,16 @@ import auth, { IAuthReduxState } from 'src/components/auth/Widgets'
  */
 export interface IReduxState {
   auth: IAuthReduxState
+  searchOptions: FluxSearchOptionReduxState
 }
 /**
  * 모든 Reducer가 개발 완료된 뒤에는, 아래 Root reducer에 reducer의 레퍼런스를 넣어주게 됩니다.
  * 해당 작업을 통해 Reducer는 Redux의 관리하에 들어갑니다.
  */
-// tslint:disable:no-any
 const rootReducer = (routeHistory: History) =>
   combineReducers({
     auth,
+    searchOptions,
     router: connectRouter(routeHistory),
   })
 /**
@@ -33,6 +37,6 @@ const rootReducer = (routeHistory: History) =>
 export const persistConfig = {
   storage,
   key: 'root',
-  blacklist: [],
+  blacklist: ['searchOptions'],
 }
 export default (routeHistory: History) => persistReducer(persistConfig, rootReducer(routeHistory))
