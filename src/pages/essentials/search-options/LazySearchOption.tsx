@@ -22,7 +22,7 @@ class LazySearchOption extends React.Component<ILazySearchOptionProps, {}> {
         ref={this.selectorRef}
         formLabel={this.props.itemType}
         fetchMode="lazy-search"
-        dataApi={dataApi}
+        api={dataApi}
       />
     )
   }

@@ -5,14 +5,20 @@
 import * as React from 'react'
 import { Map } from 'immutable'
 
-import { SelectorItem } from 'src/components/selector/types'
 import Selector from 'src/components/selector/view/Selector'
 
 export interface IContProps {
   /** Form label */
   formLabel: string
   /** Input data */
-  data: SelectorItem[]
+  data: object[]
+  /**
+   * Data object key field array.
+   * Index 0: key,
+   * Index 1: value,
+   * Default :['id', 'name']
+   */
+  fieldKey?: string[]
   /** Additional form classnaem */
   formClassName?: string
   /** If this flag is on, THE list will apperar to be loading */
@@ -26,14 +32,25 @@ export interface IContProps {
   /** Additonal functions when the form is clicked  */
   onClickForm?: (e: React.MouseEvent<HTMLDivElement>) => void
   /** Additonal functions when the form is clicked  */
-  onRightClickForm?: (e: React.MouseEvent<HTMLDivElement>) => void
+  // onRightClickForm?: (e: React.MouseEvent<HTMLDivElement>) => void;
   /**
    * Additonal functions when the search box value is changed.
    * When this props is used, the general filter function of the selector will not work.
+   *
+   * @returns
+   * true: List will be refreshed.
+   * false: List will not be refresehd.
    */
-  onChangeSearchBox?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChangeSearchBox?: (e: React.ChangeEvent<HTMLInputElement>) => boolean
   /** Additonal functions when the form list is closed  */
   onCloseList?: (e: React.MouseEvent<HTMLDivElement>) => void
+  /**
+   * Use this when you want the form list data to be refreshed.
+   * It will be useful if you use Ajax.
+   * If the function is injected into the prop,
+   * the refresh icon will appear in the form
+   */
+  onClickRefreshIcon?: (e: React.MouseEvent<HTMLElement>) => void
 }
 interface IContState {
   /** List mouting flag */
@@ -56,6 +73,7 @@ interface IContState {
 
 class SelectorContainer extends React.Component<IContProps, IContState> {
   private selectorRef = React.createRef<HTMLDivElement>()
+  private field: string[] = ['id', 'name']
 
   constructor(props: IContProps) {
     super(props)
@@ -66,6 +84,7 @@ class SelectorContainer extends React.Component<IContProps, IContState> {
       formText: '',
       searchWord: '',
     }
+    this.field = this.props.fieldKey ? this.props.fieldKey : this.field
   }
 
   getSelectedItems = () => this.state.selectedItems
@@ -75,12 +94,13 @@ class SelectorContainer extends React.Component<IContProps, IContState> {
   }
 
   onClickForm = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (this.props.onClickForm) this.props.onClickForm(e)
+
     const rect = this.selectorRef.current!.getBoundingClientRect()
     this.setState({
       isListVisible: true,
       listPosition: { x: rect.left, y: rect.top + rect.height },
     })
-    if (this.props.onClickForm) this.props.onClickForm(e)
   }
 
   onCloseList = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -95,8 +115,9 @@ class SelectorContainer extends React.Component<IContProps, IContState> {
   }
 
   onChangeSearchBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (this.props.onChangeSearchBox) this.props.onChangeSearchBox(e)
-    this.setState({ searchWord: e.target.value })
+    let isRefresh: boolean = false
+    if (this.props.onChangeSearchBox) isRefresh = this.props.onChangeSearchBox(e)
+    if (isRefresh) this.setState({ searchWord: e.target.value })
   }
 
   onClickSearchBoxIcon = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -115,9 +136,9 @@ class SelectorContainer extends React.Component<IContProps, IContState> {
       <Selector
         {...this.state}
         {...this.props}
-        list={list}
         isListIconVisible={this.props.multiple}
-        prevSearchKeyword={this.state.searchWord}
+        list={list}
+        field={this.field}
         selectorRef={this.selectorRef}
         onClickForm={this.onClickForm}
         onClearForm={this.onClearForm}
@@ -152,7 +173,7 @@ class SelectorContainer extends React.Component<IContProps, IContState> {
     list.some((item, index) => {
       if (index >= maxSelectedCnt!) return true
 
-      isUnchecked = !selectedItems.has(item.id)
+      isUnchecked = !selectedItems.has(item[this.field[0]])
       return isUnchecked
     })
     // 전체 item check 혹은 unchecked
@@ -160,23 +181,22 @@ class SelectorContainer extends React.Component<IContProps, IContState> {
     if (isUnchecked) {
       return selectedItems.withMutations(proto => {
         for (let i = 0; i < toggleCnt; i += 1) {
-          proto.set(list[i].id, list[i].name)
+          proto.set(list[i][this.field[0]], list[i][this.field[1]])
         }
       })
     }
     return selectedItems.withMutations(proto => {
       for (let i = 0; i < toggleCnt; i += 1) {
-        proto.delete(list[i].id)
+        proto.delete(list[i][this.field[0]])
       }
     })
   }
 
-  private getFilteredList = (inputText: string) => {
-    if (this.props.onChangeSearchBox) return this.props.data
-    if (inputText.length === 0) return this.props.data
+  private getFilteredList = (value: string) => {
+    if (value.length === 0) return this.props.data
 
-    const inputPattern = new RegExp(inputText, 'i')
-    return this.props.data.filter(item => item!.name.search(inputPattern) > -1)
+    const inputPattern = new RegExp(value, 'i')
+    return this.props.data.filter(item => item[this.field[1]].search(inputPattern) > -1)
   }
 }
 

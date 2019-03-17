@@ -5,9 +5,11 @@ import TextField from '@material-ui/core/TextField'
 import Badge from '@material-ui/core/Badge'
 import IconButton from '@material-ui/core/IconButton'
 import ClearIcon from '@material-ui/icons/Clear'
+import RefreshIcon from '@material-ui/icons/Refresh'
 
 interface IIconLayerProps {
   onClickClearIcon: (e: React.MouseEvent<HTMLElement>) => void
+  onClickRefreshIcon?: (e: React.MouseEvent<HTMLElement>) => void
   selectedCnt: number
   additionalIcon?: JSX.Element
 }
@@ -23,8 +25,13 @@ interface ISelectorFormProps extends IBadgeFormProps {
 const IconLayer: React.SFC<IIconLayerProps> = props => (
   <InputAdornment position="end">
     {props.additionalIcon}
-    <Badge color="secondary" className="search-box__badge" badgeContent={props.selectedCnt}>
-      <IconButton className="search-box__icon" onClick={props.onClickClearIcon}>
+    {props.onClickRefreshIcon && (
+      <IconButton className="selector-form__icon" onClick={props.onClickRefreshIcon}>
+        <RefreshIcon />
+      </IconButton>
+    )}
+    <Badge color="secondary" className="selector-form__badge" badgeContent={props.selectedCnt}>
+      <IconButton className="selector-form__icon" onClick={props.onClickClearIcon}>
         <ClearIcon />
       </IconButton>
     </Badge>
@@ -42,13 +49,7 @@ const SelectorForm: React.SFC<ISelectorFormProps> = props => (
       InputProps={{
         style: { fontSize: 'small' },
         readOnly: true,
-        endAdornment: (
-          <IconLayer
-            selectedCnt={props.selectedCnt}
-            onClickClearIcon={props.onClickClearIcon}
-            additionalIcon={props.additionalIcon}
-          />
-        ),
+        endAdornment: <IconLayer {...props} />,
       }}
       InputLabelProps={{ shrink: true }}
     />

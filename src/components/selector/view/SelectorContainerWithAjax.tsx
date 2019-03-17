@@ -1,18 +1,28 @@
 /**
- * Sign component
+ * Selector component
  * Made by Hong Young Gi, topyk21@gmail.com
  */
 import * as React from 'react'
 import axios from 'axios'
 
-import { SelectorItem } from 'src/components/selector'
 import Selector from 'src/components/selector/view/SelectorContainer'
 
-interface IApiSelectorProps {
+interface IContProps {
   /** Form label */
   formLabel: string
   /** Api, request url */
-  dataApi: string
+  api: string
+  /** Api query string, default 'name' */
+  queryKey?: string
+  /** Api output key, default undefined */
+  dataKey?: string
+  /**
+   * Data object key field array.
+   * Index 0: key,
+   * Index 1: value,
+   * Default :['id', 'name']
+   */
+  fieldKey?: string[]
   /** Additional form classnaem */
   formClassName?: string
   /** If this flag is on, it is available to check multiple */
@@ -22,22 +32,14 @@ interface IApiSelectorProps {
   /**
    * Fetch mode.
    * 'refresh-direct' mode always reloads data.
-   * 'keep-once' mode loads data only the first time you open the list
+   * 'keep-once' mode loads data only the first time you open the list.
+   * 'lazy-search' mode only loads data when search keyword is existed.
    */
-  fetchMode: 'refresh-direct' | 'keep-once' | 'lazy-search'
-  /** Additonal functions when the form is clicked  */
-  onClickForm?: (e: React.MouseEvent<HTMLDivElement>) => void
-  /** Additonal functions when the form is clicked  */
-  onRightClickForm?: (e: React.MouseEvent<HTMLDivElement>) => void
-  /**
-   * Additonal functions when the search box value is changed.
-   * When this props is used, the general filter function of the selector will not work.
-   */
-  onChangeSearchBox?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  fetchMode: 'refresh-always' | 'load-once' | 'lazy-search'
 }
-interface IApiSelectorState {
+interface IContState {
   /** Data will be saved this state after fetch */
-  data: SelectorItem[]
+  data: object[]
   /** While fetching, this flag is on */
   fetching: boolean
   /** All fetch is finished, this flag is on. This isn't used in 'lazy-search' mode  */
@@ -46,17 +48,29 @@ interface IApiSelectorState {
   typingTimeout?: NodeJS.Timeout
 }
 
-class ApiSelector extends React.Component<IApiSelectorProps, IApiSelectorState> {
-  static readonly USER_TYPING_TIMEOUT = 350
+class SelectorContainerWithAjax extends React.Component<IContProps, IContState> {
+  static readonly USER_TYPING_TIMEOUT = 500
   private selectorRef = React.createRef<Selector>()
+  private queryKey: string = 'name'
+  private dataKey?: string = undefined
 
-  constructor(props: IApiSelectorProps) {
+  constructor(props: IContProps) {
     super(props)
     this.state = {
       data: [],
       fetched: false,
       fetching: false,
     }
+    this.queryKey = this.props.queryKey ? this.props.queryKey : this.queryKey
+    this.dataKey = this.props.dataKey ? this.props.dataKey : this.dataKey
+  }
+
+  shouldComponentUpdate(nextProps: IContProps, nextState: IContState) {
+    return (
+      this.state.fetching !== nextState.fetching ||
+      this.state.data !== nextState.data ||
+      nextProps !== this.props
+    )
   }
 
   getSelectedItems = () => this.selectorRef.current!.getSelectedItems()
@@ -69,10 +83,11 @@ class ApiSelector extends React.Component<IApiSelectorProps, IApiSelectorState> 
     if (this.state.fetched) return
 
     this.setState({ fetching: true }, () => {
-      this.getItem(this.props.dataApi)
+      axios
+        .get(this.props.api)
         .then(response =>
           this.setState({
-            data: response.data,
+            data: this.dataKey ? response.data[this.dataKey] : response.data,
             fetched: true,
             fetching: false,
           })
@@ -81,33 +96,42 @@ class ApiSelector extends React.Component<IApiSelectorProps, IApiSelectorState> 
     })
   }
 
+  onClickRefreshIcon = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    this.setState({ fetched: false })
+  }
+
   onCloseList = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (this.props.fetchMode === 'refresh-direct') this.setState({ fetched: false })
+    if (this.props.fetchMode === 'refresh-always') this.setState({ fetched: false })
   }
 
   onChangeSearchBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (this.props.fetchMode !== 'lazy-search') return
+    if (this.props.fetchMode !== 'lazy-search') return true
     // Prvent typing bubbling of users
     if (this.state.typingTimeout) clearTimeout(this.state.typingTimeout)
+
     // Event poolling, please see https://reactjs.org/docs/events.html#event-pooling
     const searchValue = e.target.value
-    const searchApi = `${this.props.dataApi}?name=${searchValue}`
+    const searchApi = `${this.props.api}?${this.queryKey}=${searchValue}`
 
     this.setState({
       fetching: true,
       typingTimeout: setTimeout(() => {
-        this.getItem(searchApi)
+        axios
+          .get(searchApi)
           .then(response =>
             this.setState({
-              data: response.data,
+              data: this.dataKey ? response.data[this.dataKey] : response.data,
               typingTimeout: undefined,
               fetching: false,
             })
           )
           .catch(error => this.setState({ fetching: false }))
         // tslint:disable-next-line
-      }, ApiSelector.USER_TYPING_TIMEOUT),
+      }, SelectorContainerWithAjax.USER_TYPING_TIMEOUT),
     })
+
+    return false
   }
 
   render() {
@@ -121,13 +145,12 @@ class ApiSelector extends React.Component<IApiSelectorProps, IApiSelectorState> 
         onClickForm={this.onClickForm}
         onCloseList={this.onCloseList}
         onChangeSearchBox={this.onChangeSearchBox}
+        onClickRefreshIcon={
+          this.props.fetchMode === 'load-once' ? this.onClickRefreshIcon : undefined
+        }
       />
     )
   }
-
-  private getItem = (api: string) => {
-    return axios.get(api)
-  }
 }
 
-export default ApiSelector
+export default SelectorContainerWithAjax

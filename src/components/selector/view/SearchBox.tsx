@@ -5,7 +5,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import DoneAllIcon from '@material-ui/icons/DoneAll'
 
 interface ICheckIconProps {
-  prevSearchKeyword: string
+  searchWord: string
   onClickIcon: (e: React.MouseEvent<HTMLElement>) => void
 }
 interface ISearchBoxProps extends ICheckIconProps {
@@ -21,31 +21,19 @@ const CheckAllIcon: React.SFC<ICheckIconProps> = props => (
   </InputAdornment>
 )
 
-class SearchBox extends React.Component<ISearchBoxProps, {}> {
-  constructor(props: ISearchBoxProps) {
-    super(props)
-  }
-
-  shouldComponentUpdate() {
-    return false
-  }
-
-  render() {
-    return (
-      <TextField
-        fullWidth
-        autoFocus
-        margin="dense"
-        label="검색어"
-        variant="outlined"
-        defaultValue={this.props.prevSearchKeyword}
-        onChange={this.props.onChange}
-        InputProps={{
-          endAdornment: this.props.isIconVisible && <CheckAllIcon {...this.props} />,
-        }}
-      />
-    )
-  }
-}
+const SearchBox: React.SFC<ISearchBoxProps> = props => (
+  <TextField
+    fullWidth
+    autoFocus
+    margin="dense"
+    label="검색어"
+    variant="outlined"
+    defaultValue={props.searchWord}
+    onChange={props.onChange}
+    InputProps={{
+      endAdornment: props.isIconVisible && <CheckAllIcon {...props} />,
+    }}
+  />
+)
 
 export default SearchBox

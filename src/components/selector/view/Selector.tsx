@@ -4,7 +4,6 @@ import classNames from 'classnames'
 
 import SelectorForm from 'src/components/selector/view/SelectorForm'
 import SelectorList from 'src/components/selector/view/SelectorList'
-import { SelectorItem } from 'src/components/selector/types'
 
 interface IDefaultFormProps {
   // tslint:disable-next-line:no-any
@@ -17,13 +16,15 @@ interface IDefaultFormProps {
   onClickForm: (e: React.MouseEvent<HTMLElement>) => void
   onRightClickForm?: (e: React.MouseEvent<HTMLElement>) => void
   onClearForm: (e: React.MouseEvent<HTMLElement>) => void
+  onClickRefreshIcon?: (e: React.MouseEvent<HTMLElement>) => void
 }
 interface IListFormProps {
-  list: SelectorItem[]
+  list: object[]
+  field: string[]
   listPosition: { x: number; y: number }
   isListIconVisible?: boolean
   selectedItems: Map<string, string>
-  prevSearchKeyword: string
+  searchWord: string
   onClickList: (itemId: string, itemName: string) => void
   onCloseList: (e: React.MouseEvent<HTMLDivElement>) => void
   onClickSearchBoxIcon: (e: React.MouseEvent<HTMLDivElement>) => void
@@ -47,6 +48,7 @@ const DefaultForm: React.SFC<IDefaultFormProps> = props => {
         onClick={props.onClickForm}
         onContextMenu={props.onRightClickForm}
         onClickClearIcon={props.onClearForm}
+        onClickRefreshIcon={props.onClickRefreshIcon}
       />
       {props.children}
     </div>

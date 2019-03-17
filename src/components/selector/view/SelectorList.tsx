@@ -1,18 +1,19 @@
 import * as React from 'react'
 import { Map } from 'immutable'
 import { AutoSizer, List, ListRowProps } from 'react-virtualized'
+
 import Paper from '@material-ui/core/Paper'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import { SelectorItem } from 'src/components/selector/types'
 import SearchBox from 'src/components/selector/view/SearchBox'
 import SelectorListItem from 'src/components/selector/view/SelectorListItem'
 
 interface ISelectorListProps {
   position: { x: number; y: number }
-  itemList: SelectorItem[]
+  itemList: object[]
+  field: string[]
   selectedItems: Map<string, string>
-  prevSearchKeyword: string
+  searchWord: string
   onClick: (itemId: string, itemName: string) => void
   onClickCheckAllIcon: (e: React.MouseEvent<HTMLElement>) => void
   onChangeSearchBox: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -24,8 +25,10 @@ const SelectorList: React.SFC<ISelectorListProps> = props => {
   const ROW_HEIGHT = 24
   const rowRenderer = ({ key, index, style }: ListRowProps) => {
     const row = props.itemList[index]
-    const id = row.id
-    const label = row.name
+    const dataIdKey = props.field[0]
+    const dataValueKey = props.field[1]
+    const id = row[dataIdKey]
+    const label = row[dataValueKey]
     const isChecked = props.selectedItems.has(id)
     return (
       <SelectorListItem
@@ -51,29 +54,31 @@ const SelectorList: React.SFC<ISelectorListProps> = props => {
       }}
     >
       <SearchBox
-        prevSearchKeyword={props.prevSearchKeyword}
+        searchWord={props.searchWord}
         isIconVisible={props.isCheckAllIconVisible}
         onClickIcon={props.onClickCheckAllIcon}
         onChange={props.onChangeSearchBox}
       />
       <div className="selector-list__items-wrapper">
         {props.loading && <CircularProgress className="selector-list__progress" />}
-        <AutoSizer disableHeight>
-          {({ width }) => (
-            <List
-              className="selector-list__item"
-              width={width}
-              height={ROW_HEIGHT * 8}
-              rowHeight={ROW_HEIGHT}
-              rowCount={props.itemList.length}
-              rowRenderer={rowRenderer}
-              noRowsRenderer={noRowsRenderer}
-              overscanRowCount={10}
-              // Do not remove this. it's seems to like bug in react-virtualized.
-              style={{}}
-            />
-          )}
-        </AutoSizer>
+        {props.itemList && (
+          <AutoSizer disableHeight>
+            {({ width }) => (
+              <List
+                className="selector-list__item"
+                width={width}
+                height={ROW_HEIGHT * 8}
+                rowHeight={ROW_HEIGHT}
+                rowCount={props.itemList.length}
+                rowRenderer={rowRenderer}
+                noRowsRenderer={noRowsRenderer}
+                overscanRowCount={10}
+                // Do not remove this. it's seems to like bug in react-virtualized.
+                style={{}}
+              />
+            )}
+          </AutoSizer>
+        )}
       </div>
     </Paper>
   )

@@ -1,11 +1,8 @@
-import Selector, {
-  IContProps as SelectorProps,
-} from 'src/components/selector/view/SelectorContainer'
+import Selector from 'src/components/selector/view/SelectorContainer'
 import ApiSelector from 'src/components/selector/view/SelectorContainerWithAjax'
-import { SelectorItem } from 'src/components/selector/types'
 
 import 'src/components/selector/Selector.scss'
 
-export { ApiSelector, Selector, SelectorProps, SelectorItem }
+export { ApiSelector, Selector }
 
 export default { ApiSelector, Selector }
