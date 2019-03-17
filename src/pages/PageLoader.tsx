@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as Loadable from 'react-loadable'
 
-const PageLoader = (path: string) => {
+const loadPage = (path: string) => {
   const Page = Loadable({
     loader: () => import(`./${path}`),
     loading() {
@@ -11,4 +11,4 @@ const PageLoader = (path: string) => {
   return <Page />
 }
 
-export default PageLoader
+export default loadPage
