@@ -16,6 +16,7 @@
     "import-name": false,
     "ter-arrow-parens": [true, "as-needed"],
     "member-access": [true, "no-public"],
+    "prefer-array-literal": ["always"],
     "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
     "ordered-imports": false,
     "semicolon": [false],
