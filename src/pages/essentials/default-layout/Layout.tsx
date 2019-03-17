@@ -11,7 +11,7 @@ import Menu from 'src/pages/essentials/default-layout/Menu'
 import Contents from 'src/pages/essentials/default-layout/Contents'
 import { ThemeCode } from 'src/pages/essentials/default-layout/Widgets'
 
-import 'src/pages/essential/default-layout/Layout.scss'
+import 'src/pages/essentials/default-layout/Layout.scss'
 
 interface ILayoutProps {
   // theme props
