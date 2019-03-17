@@ -2,19 +2,20 @@
 import * as React from 'react'
 import { Map } from 'immutable'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { teal } from '@material-ui/core/colors'
+import { teal, deepPurple } from '@material-ui/core/colors'
 
 import { Layout as FlexLayout, Model } from 'src/components/flex-layout'
 import { IMenuItem } from 'src/components/menu/types'
 import Header from 'src/pages/essentials/default-layout/Header'
 import Menu from 'src/pages/essentials/default-layout/Menu'
 import Contents from 'src/pages/essentials/default-layout/Contents'
+import { ThemeCode } from 'src/pages/essentials/default-layout/Widgets'
 
-import 'src/pages/essentials/default-layout/Layout.scss'
+import 'src/pages/essential/default-layout/Layout.scss'
 
 interface ILayoutProps {
   // theme props
-  theme: 'light' | 'dark'
+  theme: ThemeCode
   // menu props
   menuItems: IMenuItem[]
   mobileMenuOpen: boolean
@@ -34,7 +35,7 @@ interface ILayoutProps {
 const Layout: React.SFC<ILayoutProps> = props => {
   const layoutTheme = createMuiTheme({
     typography: { useNextVariants: true },
-    palette: { type: props.theme, primary: teal },
+    palette: { type: props.theme, primary: teal, secondary: deepPurple },
   })
   return (
     <MuiThemeProvider theme={layoutTheme}>

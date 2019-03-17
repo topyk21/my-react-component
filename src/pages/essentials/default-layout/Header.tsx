@@ -12,8 +12,10 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import HighlightIcon from '@material-ui/icons/Highlight'
 import HighlightOutlinedIcon from '@material-ui/icons/HighlightOutlined'
 
+import { ThemeCode } from 'src/pages/essentials/default-layout/Widgets'
+
 interface IHeaderProps {
-  theme: 'light' | 'dark'
+  theme: ThemeCode
   onClickMain: () => void
   onClickSignOut: (e: React.MouseEvent<HTMLElement>) => void
   onToggleMobileMenu: (e: React.MouseEvent<HTMLElement>) => void
@@ -38,7 +40,7 @@ const Header: React.SFC<IHeaderProps> = props => (
         onClick={props.onClickMain}
         variant="h6"
       >
-        Webpage Title
+        Title is here!
       </Typography>
       <Tooltip placement="bottom" title="Toggle Theme">
         <IconButton

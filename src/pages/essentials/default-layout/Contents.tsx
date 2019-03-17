@@ -2,9 +2,10 @@ import * as React from 'react'
 import { Map } from 'immutable'
 
 import { Layout as FlexLayout, TabNode, Model } from 'src/components/flex-layout'
+import { ThemeCode } from 'src/pages/essentials/default-layout/Widgets'
 
 interface IContProps {
-  theme: 'light' | 'dark'
+  theme: ThemeCode
   layoutRef: React.Ref<FlexLayout>
   model: Model
   componentMap: Map<string, JSX.Element>

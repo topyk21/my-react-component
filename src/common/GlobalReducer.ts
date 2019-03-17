@@ -8,6 +8,7 @@ import auth, { IAuthReduxState } from 'src/components/auth/Widgets'
 import searchOptions, {
   FluxSearchOptionReduxState,
 } from 'src/pages/essentials/search-options/Widgets'
+import defaultLayout, { DefaultLayoutReduxState } from 'src/pages/essentials/default-layout/Widgets'
 /**
  * [Intellisense의 Auto complete 지원을 위한 interface]
  *
@@ -17,6 +18,7 @@ import searchOptions, {
  */
 export interface IReduxState {
   auth: IAuthReduxState
+  defaultLayout: DefaultLayoutReduxState
   searchOptions: FluxSearchOptionReduxState
 }
 /**
@@ -26,6 +28,7 @@ export interface IReduxState {
 const rootReducer = (routeHistory: History) =>
   combineReducers({
     auth,
+    defaultLayout,
     searchOptions,
     router: connectRouter(routeHistory),
   })

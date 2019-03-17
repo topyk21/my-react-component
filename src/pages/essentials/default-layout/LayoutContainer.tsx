@@ -3,30 +3,38 @@
  * Made by Hong Young Gi, topyk21@gmail.com
  */
 import * as React from 'react'
-// import * as Loadable from 'react-loadable';
+import axios from 'axios'
 import * as shortid from 'shortid'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { push } from 'connected-react-router'
 import { Map } from 'immutable'
 
+import { parseNestedObjectToFlattern } from 'src/common/DataParser'
+import { IReduxState } from 'src/common/GlobalReducer'
 import { actionCreators as authActions } from 'src/components/auth/Widgets'
 import { Layout as FlexLayout, Model, Actions } from 'src/components/flex-layout'
 import { IMenuItem } from 'src/components/menu/types'
-import { parseNestedObjectToFlattern } from 'src/common/DataParser'
-import { menuData as menuTestData } from 'src/pages/test/data'
 import Layout from 'src/pages/essentials/default-layout/Layout'
+import {
+  actionCreators as layoutActions,
+  ThemeCode,
+} from 'src/pages/essentials/default-layout/Widgets'
 
-interface IDispatchProps {
-  signOut: (e: React.MouseEvent<HTMLElement>) => void
+interface IStateProps {
+  /** Theme mode */
+  curTheme: ThemeCode
 }
-interface IContProps extends IDispatchProps {
+interface IDispatchProps {
+  signOut: () => void
+  setTheme: (theme: ThemeCode) => void
+}
+interface IOwnProps {
   /** Page loader props */
   loadPage: (path: string) => JSX.Element
 }
+interface IContProps extends IStateProps, IDispatchProps, IOwnProps {}
 interface IContState {
-  /** Theme mode */
-  curTheme: 'light' | 'dark'
   /** Responsive menu open/close flag */
   mobileMenuOpen: boolean
   /** Menu list. This will appear on the left  */
@@ -37,27 +45,16 @@ interface IContState {
   componentMap: Map<string, JSX.Element>
 }
 
-const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({
-  signOut: () => {
-    dispatch(authActions.signOut())
-    dispatch(push('./signin'))
-  },
-})
-
 class LayoutContainer extends React.Component<IContProps, IContState> {
   private tabRef = React.createRef<FlexLayout>()
   private mainTabSetId = shortid.generate()
   private model = {
     global: { tabEnableClose: true },
     borders: [
-      {
-        type: 'border',
-        location: 'right',
-      },
-      {
-        type: 'border',
-        location: 'bottom',
-      },
+      // {
+      //     type: 'border',
+      //     location: 'right',
+      // }
     ],
     layout: {
       type: 'row',
@@ -84,14 +81,20 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
   constructor(props: IContProps) {
     super(props)
     this.state = {
-      curTheme: 'dark',
       model: Model.fromJson(this.model),
       componentMap: Map(),
       mobileMenuOpen: false,
-      menuItems: parseNestedObjectToFlattern(menuTestData, 'subMenuItem'),
+      menuItems: [],
     }
     // Activate default tabset
     this.state.model.doAction(Actions.setActiveTabset(this.mainTabSetId))
+  }
+
+  componentDidMount() {
+    axios.get('/test-data/MenuData.json').then(response => {
+      const data = parseNestedObjectToFlattern(response.data, 'subMenuItem')
+      this.setState({ menuItems: data })
+    })
   }
 
   addTab = (menuName: string, componentPath?: string) => {
@@ -123,12 +126,12 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
   }
 
   toggleTheme = () => {
-    switch (this.state.curTheme) {
+    switch (this.props.curTheme) {
       case 'light':
-        this.setState({ curTheme: 'dark' })
+        this.props.setTheme('dark')
         break
       case 'dark':
-        this.setState({ curTheme: 'light' })
+        this.props.setTheme('light')
         break
     }
   }
@@ -142,7 +145,7 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
     return (
       <Layout
         // theme props
-        theme={this.state.curTheme}
+        theme={this.props.curTheme}
         // header
         onClickMain={this.onShowLayoutClick}
         onClickSignOut={this.props.signOut}
@@ -162,7 +165,21 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
   }
 }
 
-export default connect<void, IDispatchProps, void>(
-  undefined,
+const mapStateToProps = (state: IReduxState) => ({
+  curTheme: state.defaultLayout.theme,
+})
+
+const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({
+  signOut: () => {
+    dispatch(authActions.signOut())
+    dispatch(push('./signin'))
+  },
+  setTheme: (theme: ThemeCode) => {
+    dispatch(layoutActions.setTheme(theme))
+  },
+})
+
+export default connect<IStateProps, IDispatchProps, IOwnProps>(
+  mapStateToProps,
   mapDispatchToProps
 )(LayoutContainer)

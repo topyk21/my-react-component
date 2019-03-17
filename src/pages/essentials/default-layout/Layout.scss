@@ -16,7 +16,8 @@ $break-point: 1280px;
     }
   }
   .default-layout__contents-wrapper {
-    padding: 8px;
+    height: 100%;
+    overflow: auto;
   }
 }
 
