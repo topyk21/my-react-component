@@ -1,5 +1,5 @@
 import Board from 'src/components/board/BoardContainer'
 
-import 'src/components/board/view/Board.scss'
+import 'src/components/board/Board.scss'
 
 export default Board
