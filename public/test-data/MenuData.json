@@ -29,7 +29,7 @@
       {
         "id": "12",
         "label": "Test1-2",
-        "bindingPath": "test/Counter",
+        "bindingPath": "CommonBoard",
         "parentId": "1"
       },
       {
