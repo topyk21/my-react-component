@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { Map } from 'immutable'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { teal, deepPurple } from '@material-ui/core/colors'
+import { blue, pink } from '@material-ui/core/colors'
 
 import { Layout as FlexLayout, Model } from 'src/components/flex-layout'
 import { IMenuItem } from 'src/components/menu/types'
@@ -35,7 +35,7 @@ interface ILayoutProps {
 const Layout: React.SFC<ILayoutProps> = props => {
   const layoutTheme = createMuiTheme({
     typography: { useNextVariants: true },
-    palette: { type: props.theme, primary: teal, secondary: deepPurple },
+    palette: { type: props.theme, primary: blue, secondary: pink },
   })
   return (
     <MuiThemeProvider theme={layoutTheme}>

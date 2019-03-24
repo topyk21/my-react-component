@@ -1,11 +1,11 @@
 $common-hover-bg: #aaa;
 
 @mixin primary-color {
-  background-color: teal;
+  background-color: #2196f3;
   color: white;
 }
 
 @mixin secondary-color {
-  background-color: #673ab7;
+  background-color: #f50057;
   color: white;
 }
