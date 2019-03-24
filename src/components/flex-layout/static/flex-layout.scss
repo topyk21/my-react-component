@@ -28,6 +28,7 @@
       overflow: auto;
       position: absolute;
       box-sizing: border-box;
+      padding: 8px;
       background-color: lightgray;
     }
     .flexlayout__tab_button--selected {
@@ -118,6 +119,7 @@
       overflow: auto;
       position: absolute;
       box-sizing: border-box;
+      padding: 8px;
       color: white;
     }
     .flexlayout__tab_button--selected {
