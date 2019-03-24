@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Checkbox } from 'src/components/checkbox'
+import Checkbox from 'src/components/checkbox'
 
 interface ISelectorListItemProps {
   id: string

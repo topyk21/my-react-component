@@ -5,28 +5,9 @@
 import * as React from 'react'
 import classNames from 'classnames'
 
-interface IToggleboxProps {
-  /** Checkbox id */
-  id: string
-  /** Checkbox label */
-  label: string
-  /** Checkbox value */
-  value?: string
-  /** Checkbox checked flag */
-  checked?: boolean
-  /** Checkbox checked status change event */
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  /** Checkbox classname of wrapper div */
-  className?: string
-  /** Checkbox wrapper class Name */
-  style?: React.CSSProperties
-  /** Checkbox width flag. If this flag is on, component width is same with wrapper element */
-  fullWidth?: boolean
-  /** Checkbox disabled flag */
-  disabled?: boolean
-}
+import { ICheckboxViewProps } from 'src/components/checkbox/types'
 
-const Togglebox: React.SFC<IToggleboxProps> = props => {
+const Togglebox: React.SFC<ICheckboxViewProps> = props => {
   const wrapperWithFullWidth = classNames('tbx__wrapper', {
     'tbx__wrapper-full-width': props.fullWidth,
   })
