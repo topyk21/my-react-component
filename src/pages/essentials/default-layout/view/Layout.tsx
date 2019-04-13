@@ -4,27 +4,28 @@ import { Map } from 'immutable'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { blue, pink } from '@material-ui/core/colors'
 
+import { ThemeCode, LayoutDirection } from 'src/common/type'
 import { Layout as FlexLayout, Model } from 'src/components/flex-layout'
-import { IMenuItem } from 'src/components/menu/types'
-import Header from 'src/pages/essentials/default-layout/Header'
-import Menu from 'src/pages/essentials/default-layout/Menu'
-import Contents from 'src/pages/essentials/default-layout/Contents'
-import { ThemeCode } from 'src/pages/essentials/default-layout/Widgets'
-
-import 'src/pages/essentials/default-layout/Layout.scss'
+import { IMenuItem } from 'src/pages/essentials/default-layout/view/menu'
+import Header from 'src/pages/essentials/default-layout/view/Header'
+import MainMenu from 'src/pages/essentials/default-layout/view/MainMenu'
+import Contents from 'src/pages/essentials/default-layout/view/Contents'
 
 interface ILayoutProps {
   // theme props
   theme: ThemeCode
+  layoutDirection: LayoutDirection
   // menu props
   menuItems: IMenuItem[]
   mobileMenuOpen: boolean
   onToggleMobileMenu: (e: React.MouseEvent<HTMLElement>) => void
-  onClickMenuItem: (menuLabel: string, componentPath?: string) => void
+  onClickMenuItem: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
   // header props
+  searchOptionsLayout: LayoutDirection
   onClickMain: () => void
-  onClickSignOut: (e: React.MouseEvent<HTMLElement>) => void
-  onToggleTheme: (e: React.MouseEvent<HTMLElement>) => void
+  onClickSignOutIcon: (e: React.MouseEvent<HTMLElement>) => void
+  onClickThemeIcon: (e: React.MouseEvent<HTMLElement>) => void
+  onClickSearchOptionsLayoutIcon: (e: React.MouseEvent<HTMLElement>) => void
   // tab props
   model: Model
   contentsRef: React.Ref<FlexLayout>
@@ -41,7 +42,7 @@ const Layout: React.SFC<ILayoutProps> = props => {
     <MuiThemeProvider theme={layoutTheme}>
       <div className="default-layout">
         <Header {...props} />
-        <Menu {...props} />
+        <MainMenu {...props} />
         <main className="default-layout__contents">
           <Contents layoutRef={props.contentsRef} {...props} />
         </main>

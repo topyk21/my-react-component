@@ -7,19 +7,22 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import MenuIcon from '@material-ui/icons/Menu'
 
-import SignalWifiOffIcon from '@material-ui/icons/SignalWifiOff'
+import HorizontalSplitIcon from '@material-ui/icons/HorizontalSplit'
+import VerticalSplitIcon from '@material-ui/icons/VerticalSplit'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import HighlightIcon from '@material-ui/icons/Highlight'
 import HighlightOutlinedIcon from '@material-ui/icons/HighlightOutlined'
 
-import { ThemeCode } from 'src/pages/essentials/default-layout/Widgets'
+import { ThemeCode, LayoutDirection } from 'src/common/type'
 
 interface IHeaderProps {
   theme: ThemeCode
+  searchOptionsLayout: LayoutDirection
   onClickMain: () => void
-  onClickSignOut: (e: React.MouseEvent<HTMLElement>) => void
+  onClickSignOutIcon: (e: React.MouseEvent<HTMLElement>) => void
+  onClickThemeIcon: (e: React.MouseEvent<HTMLElement>) => void
+  onClickSearchOptionsLayoutIcon: (e: React.MouseEvent<HTMLElement>) => void
   onToggleMobileMenu: (e: React.MouseEvent<HTMLElement>) => void
-  onToggleTheme: (e: React.MouseEvent<HTMLElement>) => void
 }
 
 const Header: React.SFC<IHeaderProps> = props => (
@@ -28,7 +31,6 @@ const Header: React.SFC<IHeaderProps> = props => (
       <IconButton
         color="inherit"
         className="default-layout-header__menu-btn"
-        aria-label="Open drawer"
         onClick={props.onToggleMobileMenu}
       >
         <MenuIcon />
@@ -40,31 +42,31 @@ const Header: React.SFC<IHeaderProps> = props => (
         onClick={props.onClickMain}
         variant="h6"
       >
-        Title is here!
+        Smart OMS
       </Typography>
       <Tooltip placement="bottom" title="Toggle Theme">
         <IconButton
           className="default-layout-header__btn"
           color="inherit"
-          onClick={props.onToggleTheme}
+          onClick={props.onClickThemeIcon}
         >
           {props.theme === 'light' ? <HighlightIcon /> : <HighlightOutlinedIcon />}
         </IconButton>
       </Tooltip>
-      <Tooltip placement="bottom" title="Logout">
+      <Tooltip placement="bottom" title="Toggle Search Option Layout">
         <IconButton
           className="default-layout-header__btn"
           color="inherit"
-          onClick={props.onClickSignOut}
+          onClick={props.onClickSearchOptionsLayoutIcon}
         >
-          <SignalWifiOffIcon />
+          {props.searchOptionsLayout === 'row' ? <VerticalSplitIcon /> : <HorizontalSplitIcon />}
         </IconButton>
       </Tooltip>
       <Tooltip placement="bottom" title="Logout">
         <IconButton
           className="default-layout-header__btn"
           color="inherit"
-          onClick={props.onClickSignOut}
+          onClick={props.onClickSignOutIcon}
         >
           <AccountCircleIcon />
         </IconButton>

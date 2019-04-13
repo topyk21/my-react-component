@@ -4,9 +4,6 @@
  */
 import * as React from 'react'
 
-import IconButton from '@material-ui/core/IconButton'
-import RefreshIcon from '@material-ui/icons/Refresh'
-
 import { Selector } from 'src/components/selector'
 import { FluxItemCode, FetchingStatus } from 'src/pages/essentials/search-options/Widgets'
 
@@ -44,17 +41,18 @@ class FluxSearchOption extends React.Component<IFluxSearchOptionProps, {}> {
   render() {
     return (
       <Selector
-        ref={this.selectorRef}
-        multiple
         data={this.props.fluxData.data}
-        loading={this.props.fluxData.fetching}
-        formLabel={this.props.itemType}
-        onClickForm={this.onClickForm}
-        formSuffixIcon={
-          <IconButton className="search-box__icon" onClick={this.onClickRefreshIcon}>
-            <RefreshIcon />
-          </IconButton>
-        }
+        multiple
+        ref={this.selectorRef}
+        searchListProps={{
+          field: ['id', 'name'],
+          loading: this.props.fluxData.fetching,
+        }}
+        selectorFormProps={{
+          buttonId: this.props.itemType,
+          onClickRefreshIcon: this.onClickRefreshIcon,
+          textFieldProps: { label: this.props.itemType, onClick: this.onClickForm },
+        }}
       />
     )
   }

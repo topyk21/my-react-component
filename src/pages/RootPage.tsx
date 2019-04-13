@@ -1,8 +1,8 @@
 import * as React from 'react'
 
-import Layout from 'src/pages/essentials/default-layout/LayoutContainer'
 import PageLoader from 'src/pages/PageLoader'
+import { DefaultLayout } from 'src/pages/essentials/default-layout'
 
-const Page: React.SFC<{}> = () => <Layout loadPage={PageLoader} />
+const Page: React.SFC<{}> = () => <DefaultLayout pageLoader={PageLoader} />
 
 export default Page

@@ -3,9 +3,8 @@ $header-height: 48px;
 $break-point: 1280px;
 
 .default-layout {
-  display: flex;
   .default-layout__contents {
-    flex-grow: 1;
+    // flex-grow: 1;
     position: absolute;
     left: 0;
     top: $header-height;
@@ -16,9 +15,20 @@ $break-point: 1280px;
     }
   }
   .default-layout__contents-wrapper {
-    height: 100%;
+    display: flex;
     padding: 8px;
+    height: 100%;
     overflow: auto;
+
+    &.default-layout__row-base {
+      flex-direction: row;
+      height: 100%;
+    }
+
+    &.default-layout__col-base {
+      flex-direction: column;
+      height: 100%;
+    }
   }
 }
 

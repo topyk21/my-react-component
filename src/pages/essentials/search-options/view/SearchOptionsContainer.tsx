@@ -9,13 +9,15 @@
  * 2. ref로 검색조건 Data를 받아오게 설계해놓았습니다.
  *  검색조건은 모든 Page에서 별개로서 재사용 되야하기에 각 검색조건마다 status를 가지고 있어야 하는 구조에서
  *  각 검색조건을 특정 버튼을 누른 시점에서 모두 Load 해올려면 ref로 끌어오는 수밖에 없었습니다.
- *  모두가 쉽게 사용하기 위해서였던지라, Data가 역으로 흐르는 부분이 생겨 맘에 안드는 부분입니다.
+ *  React를 잘 모르는 자가 쉽게 사용하기 위해서 HOC등의 테크닉은 고려하지 않았으니 참고 바랍니다.
+ *  (Data가 역으로 흐르는 부분이 생겨 맘에 안드는 부분입니다)
  */
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as _ from 'lodash'
 
 import { IReduxState } from 'src/common/GlobalReducer'
+import { LayoutDirection } from 'src/common/type'
 import {
   ItemCode,
   FluxItemCode,
@@ -23,12 +25,13 @@ import {
   getSearchOptionItems,
   actionCreators as fluxSearchOptionActions,
 } from 'src/pages/essentials/search-options/Widgets'
-import LazySearchOption from 'src/pages/essentials/search-options/LazySearchOption'
-import FluxSearchOption from 'src/pages/essentials/search-options/FluxSearchOption'
-import SearchOptions from 'src/pages/essentials/search-options/SearchOptions'
+import LazySearchOption from 'src/pages/essentials/search-options/view/LazySearchOption'
+import FluxSearchOption from 'src/pages/essentials/search-options/view/FluxSearchOption'
+import SearchOptions from 'src/pages/essentials/search-options/view/SearchOptions'
 
 interface IStateProps {
   dataMap: { [key: string]: FetchingStatus }
+  layoutDirection: LayoutDirection
 }
 interface IDispatchProps {
   getFluxItem: (itemType: FluxItemCode) => void
@@ -86,6 +89,7 @@ class Container extends React.Component<IContProps, IContState> {
   render() {
     return (
       <SearchOptions
+        {...this.props}
         itemMap={this.props.dataMap}
         items={this.state.items}
         onClickFluxForm={this.onClickFluxForm}
@@ -100,6 +104,7 @@ class Container extends React.Component<IContProps, IContState> {
 
 const mapStateToProps = (state: IReduxState) => ({
   dataMap: state.searchOptions,
+  layoutDirection: state.defaultLayout.layoutDirection,
 })
 // tslint:disable-next-line:no-any
 const mapDispatchToProps = (dispatch: any): IDispatchProps => ({

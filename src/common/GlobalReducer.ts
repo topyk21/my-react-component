@@ -40,6 +40,6 @@ const rootReducer = (routeHistory: History) =>
 export const persistConfig = {
   storage,
   key: 'root',
-  blacklist: ['searchOptions'],
+  blacklist: ['searchOptions', 'defaultLayout'],
 }
 export default (routeHistory: History) => persistReducer(persistConfig, rootReducer(routeHistory))

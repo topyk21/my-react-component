@@ -10,28 +10,31 @@ import { Dispatch } from 'redux'
 import { push } from 'connected-react-router'
 import { Map } from 'immutable'
 
+import { ThemeCode, LayoutDirection } from 'src/common/type'
 import { parseNestedObjectToFlattern } from 'src/common/DataParser'
 import { IReduxState } from 'src/common/GlobalReducer'
+
 import { actionCreators as authActions } from 'src/components/auth/Widgets'
 import { Layout as FlexLayout, Model, Actions } from 'src/components/flex-layout'
-import { IMenuItem } from 'src/components/menu/types'
-import Layout from 'src/pages/essentials/default-layout/Layout'
-import {
-  actionCreators as layoutActions,
-  ThemeCode,
-} from 'src/pages/essentials/default-layout/Widgets'
+import { IMenuItem } from 'src/pages/essentials/default-layout/view/menu'
+
+import Layout from 'src/pages/essentials/default-layout/view/Layout'
+import { actionCreators as layoutActions } from 'src/pages/essentials/default-layout/Widgets'
 
 interface IStateProps {
   /** Theme mode */
-  curTheme: ThemeCode
+  theme: ThemeCode
+  /** Search options layout mode */
+  layoutDirection: LayoutDirection
 }
 interface IDispatchProps {
   signOut: () => void
   setTheme: (theme: ThemeCode) => void
+  setSearchOptionsLayout: (layoutMode: LayoutDirection) => void
 }
 interface IOwnProps {
   /** Page loader props */
-  loadPage: (path: string) => JSX.Element
+  pageLoader: (path: string) => JSX.Element
 }
 interface IContProps extends IStateProps, IDispatchProps, IOwnProps {}
 interface IContState {
@@ -51,10 +54,10 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
   private model = {
     global: { tabEnableClose: true },
     borders: [
-      // {
-      //     type: 'border',
-      //     location: 'right',
-      // }
+      {
+        type: 'border',
+        location: 'right',
+      },
     ],
     layout: {
       type: 'row',
@@ -63,14 +66,11 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
         {
           type: 'tabset',
           id: this.mainTabSetId,
-          weight: 50,
           selected: 0,
           children: [
             {
               type: 'tab',
-              name: '',
-              enableClose: false,
-              enableDrag: false,
+              name: 'Welcome!',
             },
           ],
         },
@@ -97,22 +97,48 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
     })
   }
 
-  addTab = (menuName: string, componentPath?: string) => {
+  onClickMenuItem = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    this.addTab(e.currentTarget.id)
+  }
+
+  onClickThemeIcon = (e: React.MouseEvent<HTMLElement>) => {
+    this.toggleTheme()
+  }
+
+  onClickSearchOptionsLayoutIcon = () => {
+    this.toggleSearchOptionsLayout()
+  }
+
+  onClickMain = () => {
+    this.showModelStatus()
+  }
+
+  onToggleMobileMenu = () => {
+    this.setState({ mobileMenuOpen: !this.state.mobileMenuOpen })
+  }
+
+  addTab = (menuId: string) => {
     if (!this.tabRef.current) return
-    if (!componentPath) return
 
-    const componentId = shortid.generate()
-    const component = this.props.loadPage(componentPath)
-    const tabModel = {
-      id: componentId,
-      name: menuName,
-      component: componentPath,
+    const menuIdx = this.state.menuItems.findIndex(item => item.id === menuId)
+    const targetItem = this.state.menuItems[menuIdx]
+
+    if (targetItem.bindingPath) {
+      const componentId = shortid.generate()
+      const component = this.props.pageLoader(targetItem.bindingPath)
+      const tabModel = {
+        id: componentId,
+        name: targetItem.value,
+        component: targetItem.bindingPath,
+      }
+
+      this.setState(
+        {
+          componentMap: this.state.componentMap.set(componentId, component),
+        },
+        () => this.tabRef.current!.addTabToActiveTabSet(tabModel)
+      )
     }
-
-    this.tabRef.current.addTabToActiveTabSet(tabModel)
-    this.setState({
-      componentMap: this.state.componentMap.set(componentId, component),
-    })
   }
 
   closeTab = (componentId: string) => {
@@ -121,12 +147,39 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
     })
   }
 
-  toggleMobileMenu = () => {
-    this.setState({ mobileMenuOpen: !this.state.mobileMenuOpen })
+  render() {
+    return (
+      <Layout
+        // theme props
+        theme={this.props.theme}
+        layoutDirection={this.props.layoutDirection}
+        // header
+        searchOptionsLayout={this.props.layoutDirection}
+        onClickMain={this.onClickMain}
+        onClickSignOutIcon={this.props.signOut}
+        onClickThemeIcon={this.onClickThemeIcon}
+        onClickSearchOptionsLayoutIcon={this.onClickSearchOptionsLayoutIcon}
+        // menu
+        menuItems={this.state.menuItems}
+        mobileMenuOpen={this.state.mobileMenuOpen}
+        onToggleMobileMenu={this.onToggleMobileMenu}
+        onClickMenuItem={this.onClickMenuItem}
+        // tab
+        contentsRef={this.tabRef}
+        model={this.state.model}
+        componentMap={this.state.componentMap}
+        closeTab={this.closeTab}
+      />
+    )
   }
 
-  toggleTheme = () => {
-    switch (this.props.curTheme) {
+  private showModelStatus = () => {
+    // tslint:disable-next-line
+    console.log(JSON.stringify(this.state.model.toJson(), null, '\t'))
+  }
+
+  private toggleTheme = () => {
+    switch (this.props.theme) {
       case 'light':
         this.props.setTheme('dark')
         break
@@ -136,37 +189,21 @@ class LayoutContainer extends React.Component<IContProps, IContState> {
     }
   }
 
-  onShowLayoutClick = () => {
-    // tslint:disable-next-line
-    console.log(JSON.stringify(this.state.model.toJson(), null, '\t'))
-  }
-
-  render() {
-    return (
-      <Layout
-        // theme props
-        theme={this.props.curTheme}
-        // header
-        onClickMain={this.onShowLayoutClick}
-        onClickSignOut={this.props.signOut}
-        onToggleTheme={this.toggleTheme}
-        // menu
-        menuItems={this.state.menuItems}
-        mobileMenuOpen={this.state.mobileMenuOpen}
-        onToggleMobileMenu={this.toggleMobileMenu}
-        onClickMenuItem={this.addTab}
-        // tab
-        contentsRef={this.tabRef}
-        model={this.state.model}
-        componentMap={this.state.componentMap}
-        closeTab={this.closeTab}
-      />
-    )
+  private toggleSearchOptionsLayout = () => {
+    switch (this.props.layoutDirection) {
+      case 'row':
+        this.props.setSearchOptionsLayout('column')
+        break
+      case 'column':
+        this.props.setSearchOptionsLayout('row')
+        break
+    }
   }
 }
 
 const mapStateToProps = (state: IReduxState) => ({
-  curTheme: state.defaultLayout.theme,
+  theme: state.defaultLayout.theme,
+  layoutDirection: state.defaultLayout.layoutDirection,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({
@@ -176,6 +213,9 @@ const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({
   },
   setTheme: (theme: ThemeCode) => {
     dispatch(layoutActions.setTheme(theme))
+  },
+  setSearchOptionsLayout: (layoutMode: LayoutDirection) => {
+    dispatch(layoutActions.setLayoutDirection(layoutMode))
   },
 })
 

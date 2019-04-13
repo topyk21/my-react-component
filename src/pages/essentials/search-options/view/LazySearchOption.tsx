@@ -1,28 +1,29 @@
 import * as React from 'react'
 
-import { ApiSelector } from 'src/components/selector'
-import { getApiUrl, LazyItemCode } from 'src/pages/essentials/search-options/Widgets'
+import { SelectorWithAjax } from 'src/components/selector'
+import { getUrl, LazyItemCode } from 'src/pages/essentials/search-options/Widgets'
 
 interface ILazySearchOptionProps {
   itemType: LazyItemCode
 }
 
 class LazySearchOption extends React.Component<ILazySearchOptionProps, {}> {
-  private selectorRef = React.createRef<ApiSelector>()
+  private selectorRef = React.createRef<SelectorWithAjax>()
 
   getCheckedData = () => this.selectorRef.current!.getSelectedItems()
 
   clearSelectedItems = () => this.selectorRef.current!.clearSelectedItems()
 
   render() {
-    const dataApi = getApiUrl(this.props.itemType)
+    const dataApi = getUrl(this.props.itemType)
     return (
-      <ApiSelector
+      <SelectorWithAjax
+        api={dataApi}
+        fetchMode="lazy-search"
         multiple
         ref={this.selectorRef}
-        formLabel={this.props.itemType}
-        fetchMode="lazy-search"
-        api={dataApi}
+        searchListProps={{ field: ['id', 'name'] }}
+        selectorFormTextFieldProps={{ label: this.props.itemType }}
       />
     )
   }

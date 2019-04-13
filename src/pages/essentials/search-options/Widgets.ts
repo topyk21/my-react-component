@@ -4,7 +4,7 @@ import { createAction, handleActions, Action } from 'redux-actions'
 import { ThunkAction } from 'redux-thunk'
 
 /****************** Service function ******************/
-export const getApiUrl = (itemType: ItemCode) => `https://jsonplaceholder.typicode.com/${itemType}`
+export const getUrl = (itemType: ItemCode) => `https://jsonplaceholder.typicode.com/${itemType}`
 /****************** Type ******************/
 /** Fetch item type */
 type FetchedItem = {
@@ -20,9 +20,44 @@ export type FetchingStatus = {
 }
 /** Server fetch option */
 export type ItemCode = FluxItemCode | LazyItemCode
-export type FluxItemCode = 'comments' | 'users'
+export type FluxItemCode =
+  | 'comments'
+  | 'users'
+  | 'comments1'
+  | 'comments2'
+  | 'comments3'
+  | 'comments4'
+  | 'comments5'
+  | 'comments6'
+  | 'comments7'
+  | 'comments8'
+  | 'comments9'
+  | 'comments0'
+  | 'commentsa'
+  | 'commentsb'
+  | 'commentsc'
+  | 'commentsd'
+  | 'commentse'
 export type LazyItemCode = 'posts' | 'todos'
-export const fluxItems: FluxItemCode[] = ['comments', 'users']
+export const fluxItems: FluxItemCode[] = [
+  'comments',
+  'users',
+  'comments1',
+  'comments2',
+  'comments3',
+  'comments4',
+  'comments5',
+  'comments6',
+  'comments7',
+  'comments8',
+  'comments9',
+  'comments0',
+  'commentsa',
+  'commentsb',
+  'commentsc',
+  'commentsd',
+  'commentse',
+]
 export const lazyItems: LazyItemCode[] = ['todos', 'posts']
 /** Redux state type */
 export type FluxSearchOptionReduxState = { [K in FluxItemCode]: FetchingStatus }
@@ -30,6 +65,21 @@ export type FluxSearchOptionReduxState = { [K in FluxItemCode]: FetchingStatus }
 const initialState: FluxSearchOptionReduxState = {
   comments: { fetching: false, fetched: false, data: [] },
   users: { fetching: false, fetched: false, data: [] },
+  comments0: { fetching: false, fetched: false, data: [] },
+  comments1: { fetching: false, fetched: false, data: [] },
+  comments2: { fetching: false, fetched: false, data: [] },
+  comments3: { fetching: false, fetched: false, data: [] },
+  comments4: { fetching: false, fetched: false, data: [] },
+  comments5: { fetching: false, fetched: false, data: [] },
+  comments6: { fetching: false, fetched: false, data: [] },
+  comments7: { fetching: false, fetched: false, data: [] },
+  comments8: { fetching: false, fetched: false, data: [] },
+  comments9: { fetching: false, fetched: false, data: [] },
+  commentsa: { fetching: false, fetched: false, data: [] },
+  commentsb: { fetching: false, fetched: false, data: [] },
+  commentsc: { fetching: false, fetched: false, data: [] },
+  commentsd: { fetching: false, fetched: false, data: [] },
+  commentse: { fetching: false, fetched: false, data: [] },
 }
 /****************** Action ******************/
 /** Action types */
@@ -61,7 +111,7 @@ export const actionCreators = {
 export const getSearchOptionItems = (
   itemType: FluxItemCode
 ): ThunkAction<void, FluxSearchOptionReduxState, undefined, AnyAction> => dispatch => {
-  const apiUrl = getApiUrl(itemType)
+  const apiUrl = getUrl(itemType)
   dispatch(actionCreators.startFetch(itemType))
   return axios
     .get(apiUrl)

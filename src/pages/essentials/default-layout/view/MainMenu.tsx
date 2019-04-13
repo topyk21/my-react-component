@@ -6,14 +6,13 @@ import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 
-import { IMenuItem } from 'src/components/menu/types'
-import Menu from 'src/components/menu'
+import Menu, { IMenuItem } from 'src/pages/essentials/default-layout/view/menu'
 
 interface IMenuProps {
   menuItems: IMenuItem[]
   mobileMenuOpen: boolean
   onToggleMobileMenu: (e: React.MouseEvent<HTMLElement>) => void
-  onClickMenuItem: (menuLabel: string, componentPath?: string) => void
+  onClickMenuItem: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
 }
 
 const MenuForm: React.SFC<IMenuProps> = props => (

@@ -6,14 +6,12 @@ import * as React from 'react'
 
 import List from '@material-ui/core/List'
 
-import MenuItem from 'src/components/menu/view/MenuItem'
-import { IMenuItem } from 'src/components/menu/types'
-
-import 'src/components/menu/view/Menu.scss'
+import MenuItem from 'src/pages/essentials/default-layout/view/menu/MenuItem'
+import { IMenuItem } from 'src/pages/essentials/default-layout/view/menu/types'
 
 interface IMenuProps {
   menuItems: IMenuItem[]
-  onClick: (menuLabel: string, componentPath?: string) => void
+  onClick: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
 }
 
 const Menu: React.SFC<IMenuProps> = props => {
@@ -31,16 +29,10 @@ const Menu: React.SFC<IMenuProps> = props => {
     groupStartIdx = nextParentIdx
   }
 
-  const onClick = (menuId: string) => {
-    const menuIdx = props.menuItems.findIndex(item => item.id === menuId)
-    const targetItem = props.menuItems[menuIdx]
-    props.onClick(targetItem.label, targetItem.bindingPath)
-  }
-
   return (
     <List component="nav">
       {parsingPiece.map(menuItems => (
-        <MenuItem key={menuItems[0].id} menuItems={menuItems} onClick={onClick} />
+        <MenuItem key={menuItems[0].id} menuItems={menuItems} onClick={props.onClick} />
       ))}
     </List>
   )
