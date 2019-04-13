@@ -2,7 +2,7 @@ $progress-size: 48px;
 $prgoress-margin: -$progress-size / 2;
 
 .selector-form {
-  .selector-form__icon {
+  .selector-form__icon-layer button {
     padding: 0px;
   }
   .selector-form__badge > span {
@@ -10,19 +10,11 @@ $prgoress-margin: -$progress-size / 2;
     width: 16px;
     height: 16px;
   }
-  .selector-list-overlay {
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
+}
+
+.selector-list-popper {
   .selector-list__wrapper {
-    border: 1px solid;
-    position: fixed;
-    flex: 1 1 auto;
-    z-index: 1;
+    padding: 4px;
     .selector-list__progress {
       position: absolute;
       top: 50%;

@@ -1,8 +1,8 @@
-import Selector from 'src/components/selector/view/SelectorContainer'
-import ApiSelector from 'src/components/selector/view/SelectorContainerWithAjax'
+import Selector from 'src/components/selector/container/SelectorContainer'
+import SelectorWithAjax from 'src/components/selector/container/SelectorContainerWithAjax'
 
-import 'src/components/selector/Selector.scss'
+import 'src/components/selector/view/Selector.scss'
 
-export { ApiSelector, Selector }
+export { SelectorWithAjax, Selector }
 
-export default { ApiSelector, Selector }
+export default { SelectorWithAjax, Selector }
