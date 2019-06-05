@@ -5,6 +5,7 @@ import { PopoverProps } from '@material-ui/core/Popover'
 import { Omit } from 'src/common/type'
 
 type SearchTextField = Omit<StandardTextFieldProps, 'autoFocus' | 'fullWidth' | 'InputProps'>
+
 /**
  * Selector Click 시 나오는 List의 검색 박스 View interface 입니다.
  *
@@ -56,6 +57,7 @@ export interface ISearchListProps {
 }
 
 type SelectorFormTextField = Omit<StandardTextFieldProps, 'InputLabelProps' | 'InputProps'>
+
 export interface ISelectorFormProps {
   textFieldProps: SelectorFormTextField
   /**
@@ -111,6 +113,7 @@ export interface ISelectorProps {
    */
   selectorFormProps: ISelectorFormProps
 }
+
 /**
  * Selector list의 검색 text field material ui 속성을 지정합니다.
  * onChange는 내부 logic 처리를 위하여 boolean을 return 하도록 변환하였습니다.
@@ -118,6 +121,7 @@ export interface ISelectorProps {
 interface ISearchTextFieldContainerProps extends SearchTextField {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => boolean
 }
+
 /**
  * Selector click 시 나올 item 영역의 사용자 노출 속성을 정의합니다.
  */
@@ -125,6 +129,7 @@ interface ISearchListContainerProps
   extends Omit<ISearchListProps, 'selectedData' | 'onClickItem' | 'data'> {
   onClose?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
+
 /**
  * Main Selector form의 사용자 노출 속성을 정의합니다.
  *
@@ -133,8 +138,10 @@ interface ISearchListContainerProps
  */
 export interface ISelectorFormContainerProps
   extends Omit<ISelectorFormProps, 'selectedCount' | 'onClickClearIcon' | 'textFieldProps'> {
-  textFieldProps: Omit<SelectorFormTextField, 'value'>
+  textFieldProps: Omit<SelectorFormTextField, 'value'>,
+  buttonId?: string
 }
+
 /**
  * User에게 노출되는 실제 Selector 속성
  * 당신이 일반 Page 개발자라면, 해당 속성의 문제 혹은 추가 필요 속성을 상위에 건의하십시오.
@@ -162,6 +169,7 @@ export interface ISelectorContainerProps {
    */
   selectorFormProps: ISelectorFormContainerProps
 }
+
 /**
  * Selector Container state
  *
@@ -216,6 +224,7 @@ export interface ISelectorContainerWithAjaxProps
    */
   selectorFormTextFieldProps?: Omit<SelectorFormTextField, 'value' | 'onClick'>
 }
+
 /**
  * Selector Container state
  *
