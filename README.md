@@ -109,7 +109,7 @@ interface IBoardListProps {
 ```
 
 - Think like React. Always think for better way. If the page you are building can be divided into smaller units, devide it. And make it flexible so you can recycle it elsewhere. For example, imagine that you are building a free board. The free board consists of 'grid' and 'search window'. So you have to create a flexible grid and search box that can support either 'free' or 'announcement' or 'information' before create a free board.
-- You should be familiar with the View-container pattern. Container does not include any view-related code. Container includes the code associated with the action and user inetraction.
+- You should be familiar with the View-container pattern. Container does not include any view-related code. Container includes the code associated with the action and user interaction.
 
 ```java
 (X)
