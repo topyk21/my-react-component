@@ -16,10 +16,6 @@ interface IBorderTabSetProps {
 class BorderTabSet extends React.Component<IBorderTabSetProps, {}> {
   private toolbarRef = React.createRef<HTMLDivElement>()
 
-  constructor(props: IBorderTabSetProps) {
-    super(props)
-  }
-
   render() {
     const border = this.props.border
     const style = border.getTabHeaderRect()!.styleWithPosition({})

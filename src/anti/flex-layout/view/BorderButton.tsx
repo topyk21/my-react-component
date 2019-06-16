@@ -20,10 +20,6 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
   private selfRef = React.createRef<HTMLDivElement>()
   private contentsRef = React.createRef<HTMLDivElement>()
 
-  constructor(props: IBorderButtonProps) {
-    super(props)
-  }
-
   componentDidMount() {
     this.updateRect()
   }
@@ -83,7 +79,7 @@ class BorderButton extends React.Component<IBorderButtonProps, {}> {
     let leadingContent
 
     if (node.getIcon() !== undefined) {
-      leadingContent = <img src={node.getIcon()} />
+      leadingContent = <img alt="icon" src={node.getIcon()} />
     }
 
     const content = (

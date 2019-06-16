@@ -381,7 +381,7 @@ class Model {
     const id = node.getId()
     if (this.idMap[id] !== undefined) {
       // tslint:disable-next-line
-      throw `Error: each node must have a unique id, duplicate id: '${node.getId()}'`
+      console.log(`Error: each node must have a unique id, duplicate id: '${node.getId()}'`)
     }
 
     if (node.getType() !== 'splitter') {

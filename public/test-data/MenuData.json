@@ -1,0 +1,133 @@
+[
+  {
+    "id": "1",
+    "value": "기준 정보",
+    "parentId": "-1",
+    "subItems": [
+      {
+        "id": "11",
+        "value": "Test1 Page",
+        "parentId": "1",
+        "subItems": [
+          {
+            "id": "111",
+            "value": "Test2 Page",
+            "parentId": "1",
+            "subItems": [
+              {
+                "id": "1111",
+                "value": "Test3 Page",
+                "bindingPath": "test/Test3",
+                "parentId": "111"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "12",
+        "value": "공정 기준 정보",
+        "bindingPath": "test/Test1",
+        "parentId": "1"
+      },
+      {
+        "id": "13",
+        "value": "Route flow setup",
+        "bindingPath": "test/Test2",
+        "parentId": "1"
+      },
+      {
+        "id": "14",
+        "value": "User code",
+        "bindingPath": "test/Counter",
+        "parentId": "1"
+      },
+      {
+        "id": "15",
+        "value": "System code",
+        "bindingPath": "test/Counter",
+        "parentId": "1"
+      },
+      {
+        "id": "16",
+        "value": "Sap code 기준 정보",
+        "bindingPath": "test/Test5",
+        "parentId": "1"
+      },
+      {
+        "id": "17",
+        "value": "제품 정보 통합 관리",
+        "bindingPath": "test/Test6",
+        "parentId": "1"
+      },
+      {
+        "id": "18",
+        "value": "Mailing 관리",
+        "bindingPath": "test/Test1",
+        "parentId": "1"
+      },
+      {
+        "id": "19",
+        "value": "단축키 설정",
+        "bindingPath": "WaitingWindow",
+        "parentId": "1"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "value": "System 관리",
+    "parentId": "-1",
+    "subItems": [
+      {
+        "id": "21",
+        "value": "사용자 정보 관리",
+        "parentId": "2",
+        "subItems": [
+          { "id": "22", "value": "메뉴", "parentId": "2" },
+          { "id": "221", "value": "Main 메뉴", "parentId": "2" },
+          { "id": "222", "value": "Sub 메뉴", "parentId": "2" },
+          { "id": "223", "value": "메인 메뉴", "parentId": "2" },
+          { "id": "224", "value": "보조 메뉴", "parentId": "2" }
+        ]
+      },
+      { "id": "23", "value": "Role 그룹 기준정보", "parentId": "2" },
+      { "id": "24", "value": "Property 관리", "parentId": "2" },
+      { "id": "25", "value": "Map Symbol Color 관리", "parentId": "2" },
+      { "id": "26", "value": "Calendar 관리", "parentId": "2" },
+      { "id": "27", "value": "언어 관리", "parentId": "2" },
+      { "id": "28", "value": "알람 이력 조회", "parentId": "2" },
+      { "id": "29", "value": "쿼리 로그 조회", "parentId": "2" }
+    ]
+  },
+  {
+    "id": "3",
+    "value": "계획",
+    "parentId": "-1",
+    "subItems": [
+      {
+        "id": "111111",
+        "value": "Test2 Page",
+        "bindingPath": "test/Test2",
+        "parentId": "3",
+        "subItems": [
+          {
+            "id": "1111222",
+            "value": "Test3 Page",
+            "bindingPath": "test/Test3",
+            "parentId": "111111"
+          }
+        ]
+      }
+    ]
+  },
+  { "id": "4", "value": "비용", "parentId": "-1" },
+  { "id": "5", "value": "재공", "parentId": "-1" },
+  { "id": "6", "value": "BOM", "parentId": "-1" },
+  { "id": "7", "value": "발주", "parentId": "-1" },
+  { "id": "8", "value": "납품", "parentId": "-1" },
+  { "id": "9", "value": "IQC", "parentId": "-1" },
+
+  { "id": "a", "value": "김성호", "parentId": "-1", "bindingPath": "test/Test3" },
+  { "id": "c", "value": "메뉴2", "parentId": "-1" }
+]
