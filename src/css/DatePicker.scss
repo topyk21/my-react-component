@@ -1,0 +1,27 @@
+@import 'src/css/Color.scss';
+
+.date-picker__day {
+  width: 36px;
+  height: 36px;
+  font-size: small !important;
+  margin: 0 2px;
+}
+.date-picker__day-non-current-month {
+  color: rgb(190, 190, 190) !important;
+}
+.date-picker__day-non-current-month-highlight {
+  color: rgb(190, 190, 190) !important;
+}
+.date-picker__day-highlight {
+  @include primary-color;
+}
+.date-picker__day-first-hightlight {
+  @include primary-color;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+.date-picker__day-last-hightlight {
+  @include primary-color;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}

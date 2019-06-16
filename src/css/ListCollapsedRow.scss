@@ -1,0 +1,16 @@
+.list-collapsed-row {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  span {
+    font-size: 0.875rem;
+    font-weight: 400 !important;
+  }
+}
+
+.list-collapsed-row__parent {
+  span {
+    font-size: 0.875rem;
+    font-weight: 600 !important;
+    line-height: 1.75;
+  }
+}

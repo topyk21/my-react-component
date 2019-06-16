@@ -1,0 +1,29 @@
+.date-selector {
+  .date-selector__radio-control {
+    text-transform: capitalize;
+  }
+
+  .date-selector__date-wrapper {
+    width: 100%;
+    max-width: 270px;
+
+    .date-selector__date-picker {
+      width: 50%;
+      max-width: 125px;
+
+      input[type='text'] {
+        text-align: center;
+      }
+    }
+
+    .date-selector__dash {
+      position: relative;
+      top: 0;
+      display: inline-block;
+      width: 20px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: normal;
+    }
+  }
+}

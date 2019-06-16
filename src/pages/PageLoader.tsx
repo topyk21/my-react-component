@@ -1,14 +1,12 @@
 import * as React from 'react'
-import * as Loadable from 'react-loadable'
 
 const loadPage = (path: string) => {
-  const Page = Loadable({
-    loader: () => import(`./${path}`),
-    loading() {
-      return <div>Loading...</div>
-    },
-  })
-  return <Page />
+  const Page = React.lazy(() => import(`./${path}`))
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <Page />
+    </React.Suspense>
+  )
 }
 
 export default loadPage

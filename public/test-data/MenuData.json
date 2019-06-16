@@ -3,19 +3,17 @@
     "id": "1",
     "value": "기준 정보",
     "parentId": "-1",
-    "subMenuItem": [
+    "subItems": [
       {
         "id": "11",
         "value": "Test1 Page",
-        "bindingPath": "test/Test1",
         "parentId": "1",
-        "subMenuItem": [
+        "subItems": [
           {
             "id": "111",
             "value": "Test2 Page",
-            "bindingPath": "test/Test2",
             "parentId": "1",
-            "subMenuItem": [
+            "subItems": [
               {
                 "id": "1111",
                 "value": "Test3 Page",
@@ -29,7 +27,7 @@
       {
         "id": "12",
         "value": "공정 기준 정보",
-        "bindingPath": "CommonBoard",
+        "bindingPath": "test/Test1",
         "parentId": "1"
       },
       {
@@ -41,13 +39,13 @@
       {
         "id": "14",
         "value": "User code",
-        "bindingPath": "test/Test3",
+        "bindingPath": "test/Counter",
         "parentId": "1"
       },
       {
         "id": "15",
         "value": "System code",
-        "bindingPath": "test/Test4",
+        "bindingPath": "test/Counter",
         "parentId": "1"
       },
       {
@@ -80,12 +78,12 @@
     "id": "2",
     "value": "System 관리",
     "parentId": "-1",
-    "subMenuItem": [
+    "subItems": [
       {
         "id": "21",
         "value": "사용자 정보 관리",
         "parentId": "2",
-        "subMenuItem": [
+        "subItems": [
           { "id": "22", "value": "메뉴", "parentId": "2" },
           { "id": "221", "value": "Main 메뉴", "parentId": "2" },
           { "id": "222", "value": "Sub 메뉴", "parentId": "2" },
@@ -106,13 +104,13 @@
     "id": "3",
     "value": "계획",
     "parentId": "-1",
-    "subMenuItem": [
+    "subItems": [
       {
         "id": "111111",
         "value": "Test2 Page",
         "bindingPath": "test/Test2",
         "parentId": "3",
-        "subMenuItem": [
+        "subItems": [
           {
             "id": "1111222",
             "value": "Test3 Page",
@@ -128,5 +126,8 @@
   { "id": "6", "value": "BOM", "parentId": "-1" },
   { "id": "7", "value": "발주", "parentId": "-1" },
   { "id": "8", "value": "납품", "parentId": "-1" },
-  { "id": "9", "value": "IQC", "parentId": "-1" }
+  { "id": "9", "value": "IQC", "parentId": "-1" },
+
+  { "id": "a", "value": "김성호", "parentId": "-1", "bindingPath": "test/Test3" },
+  { "id": "c", "value": "메뉴2", "parentId": "-1" }
 ]
