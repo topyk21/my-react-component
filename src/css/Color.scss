@@ -1,0 +1,14 @@
+/**
+ * 공통으로 사용할 Common 한 CSS Property들을 여기에 정의합니다.
+ */
+$common-hover-bg: #aaa;
+
+@mixin primary-color {
+  background-color: #2196f3;
+  color: white;
+}
+
+@mixin secondary-color {
+  background-color: #f50057;
+  color: white;
+}
