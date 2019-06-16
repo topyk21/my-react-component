@@ -42,7 +42,7 @@ const ItemWrapper: React.SFC<{ error?: any; image: any }> = props => {
 
 const PreviewImage: React.SFC<{ image: any }> = props => (
   <figure className="img-wrapper">
-    <img style={{ width: '100%' }} src={props.image} />
+    <img alt="preview" style={{ width: '100%' }} src={props.image} />
   </figure>
 )
 
