@@ -18,7 +18,7 @@
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.11",
     "memoize-one": "^5.0.4",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "react": "^16.8.6",
     "react-app-polyfill": "^1.0.1",
     "react-dom": "^16.8.6",
